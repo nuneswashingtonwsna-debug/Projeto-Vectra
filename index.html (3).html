@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071018">
+  <meta name="color-scheme" content="dark">
+  <title>PROJETO VECTRA B — Engenharia de Confiabilidade</title>
+  <style>
+    /* ================================================================
+       PROJETO VECTRA B — INTERFACE TÉCNICA / INDUSTRIAL
+       Mobile-first, sem dependências externas
+       ================================================================ */
+    :root {
+      --bg: #071018;
+      --surface: #0d1822;
+      --surface-2: #132331;
+      --surface-3: #192d3d;
+      --line: #29465a;
+      --line-soft: #1c3343;
+      --text: #e7f1f7;
+      --muted: #91a7b5;
+      --blue: #29a8ff;
+      --blue-2: #1279bc;
+      --green: #35d07f;
+      --yellow: #f2bf43;
+      --red: #ff6370;
+      --orange: #ff9248;
+      --shadow: 0 12px 30px rgba(0, 0, 0, .28);
+      --radius: 14px;
+      --nav-h: 70px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 300px;
+      min-height: 100vh;
+      font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 90% -10%, rgba(41,168,255,.11), transparent 30%),
+        linear-gradient(180deg, #061018 0%, var(--bg) 100%);
+      padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { touch-action: manipulation; }
+    a { color: var(--blue); overflow-wrap: anywhere; }
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1 { font-size: 1.35rem; letter-spacing: .04em; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 1rem; }
+    small, .muted { color: var(--muted); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .nowrap { white-space: nowrap; }
+    .hidden { display: none !important; }
+    .danger-text { color: var(--red); }
+    .good-text { color: var(--green); }
+    .warning-text { color: var(--yellow); }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 58px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(7, 16, 24, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand { min-width: 0; }
+    .brand strong {
+      display: block;
+      font-size: .95rem;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand span { display: block; font-size: .7rem; color: var(--blue); text-transform: uppercase; }
+    .header-actions { display: flex; gap: 6px; }
+
+    .icon-btn, .btn {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      background: var(--surface-2);
+      cursor: pointer;
+      transition: border-color .15s, transform .15s, background .15s;
+    }
+    .icon-btn { min-width: 44px; padding: 8px; font-size: 1.05rem; }
+    .btn { padding: 10px 14px; font-weight: 700; }
+    .btn:active, .icon-btn:active { transform: translateY(1px); }
+    .btn:hover, .icon-btn:hover { border-color: var(--blue); }
+    .btn.primary { background: var(--blue-2); border-color: var(--blue); }
+    .btn.success { background: #157447; border-color: var(--green); }
+    .btn.danger { background: #722a34; border-color: var(--red); }
+    .btn.warning { background: #674f18; border-color: var(--yellow); }
+    .btn.ghost { background: transparent; }
+    .btn.small { min-height: 38px; padding: 7px 10px; font-size: .82rem; }
+    .btn.block { width: 100%; }
+    .btn:disabled { opacity: .42; cursor: not-allowed; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .button-row > .btn { flex: 1 1 130px; }
+
+    main {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: 14px 12px 26px;
+    }
+
+    .page-title { display: flex; justify-content: space-between; align-items: start; gap: 10px; margin-bottom: 12px; }
+    .page-title h1 { margin-bottom: 2px; }
+    .eyebrow { color: var(--blue); text-transform: uppercase; letter-spacing: .14em; font-size: .68rem; font-weight: 800; }
+
+    .grid { display: grid; gap: 10px; }
+    .grid.two, .grid.three, .grid.four { grid-template-columns: 1fr; }
+    .card {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(19,35,49,.94), rgba(12,24,34,.97));
+      box-shadow: 0 5px 16px rgba(0,0,0,.16);
+      padding: 14px;
+      min-width: 0;
+    }
+    .card.flat { box-shadow: none; }
+    .card.accent { border-left: 4px solid var(--blue); }
+    .card.critical { border-left: 4px solid var(--red); }
+    .card.attention { border-left: 4px solid var(--yellow); }
+    .card.good { border-left: 4px solid var(--green); }
+    .card h2, .card h3 { margin-bottom: 8px; }
+    .metric .label { color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .07em; }
+    .metric .value { display: block; margin: 4px 0 2px; font-size: 1.4rem; font-weight: 850; color: var(--text); }
+    .metric .sub { color: var(--muted); font-size: .75rem; }
+    .section { margin-top: 16px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 9px; }
+    .section-head h2 { margin: 0; }
+
+    .chip, .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--muted);
+      background: rgba(7,16,24,.55);
+      font-size: .7rem;
+      font-weight: 750;
+      vertical-align: middle;
+    }
+    .badge.green { color: var(--green); border-color: rgba(53,208,127,.5); }
+    .badge.yellow { color: var(--yellow); border-color: rgba(242,191,67,.5); }
+    .badge.red { color: var(--red); border-color: rgba(255,99,112,.55); }
+    .badge.blue { color: var(--blue); border-color: rgba(41,168,255,.5); }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .field { margin-bottom: 11px; }
+    label { display: block; margin: 0 0 5px; color: #bed0dc; font-size: .79rem; font-weight: 700; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      padding: 10px 11px;
+      color: var(--text);
+      background: #09141d;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(41,168,255,.12); }
+    textarea { min-height: 86px; resize: vertical; }
+    input[type="checkbox"], input[type="radio"] { width: 20px; min-height: 20px; accent-color: var(--blue); }
+    input[type="range"] { padding: 0; }
+    .checkline { display: flex; align-items: flex-start; gap: 9px; min-height: 34px; }
+    .checkline label { margin: 1px 0 0; font-weight: 500; }
+    .form-grid { display: grid; grid-template-columns: 1fr; gap: 0 10px; }
+    .help { margin-top: 4px; color: var(--muted); font-size: .7rem; }
+    .required::after { content: " *"; color: var(--red); }
+    .invalid { border-color: var(--red) !important; }
+
+    details {
+      border: 1px solid var(--line-soft);
+      border-radius: 11px;
+      background: rgba(8,19,28,.55);
+      margin-bottom: 9px;
+      overflow: hidden;
+    }
+    summary {
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 11px 12px;
+      color: #d9e8f1;
+      font-weight: 800;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; margin-left: auto; color: var(--blue); }
+    details[open] summary::after { content: "−"; }
+    .details-body { padding: 0 12px 12px; }
+
+    .list { display: grid; gap: 8px; }
+    .list-item { border: 1px solid var(--line-soft); border-radius: 11px; padding: 11px; background: rgba(7,16,24,.55); }
+    .list-item-head { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+    .list-item h3 { margin: 0 0 3px; overflow-wrap: anywhere; }
+    .list-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .list-actions .btn { flex: 1 1 90px; }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 24px 15px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(13,24,34,.45);
+    }
+    .empty strong { display: block; color: var(--text); margin-bottom: 4px; }
+
+    .progress { height: 9px; overflow: hidden; border-radius: 999px; background: #050c12; border: 1px solid var(--line-soft); }
+    .progress > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--blue-2), var(--blue)); }
+    .progress.green > span { background: var(--green); }
+    .progress.yellow > span { background: var(--yellow); }
+    .progress.red > span { background: var(--red); }
+
+    .timeline { display: grid; gap: 0; }
+    .timeline-item { display: grid; grid-template-columns: 20px 1fr; gap: 8px; min-height: 54px; }
+    .timeline-dot { position: relative; width: 12px; height: 12px; margin-top: 4px; border: 3px solid var(--blue); border-radius: 50%; background: var(--bg); }
+    .timeline-dot::after { content: ""; position: absolute; left: 2px; top: 11px; width: 2px; height: 40px; background: var(--line); }
+    .timeline-item:last-child .timeline-dot::after { display: none; }
+
+    .score { font-size: 1.5rem; font-weight: 900; color: var(--blue); }
+    .alert-item { border-left: 4px solid var(--muted); }
+    .alert-item[data-level="CRÍTICO"] { border-left-color: var(--red); }
+    .alert-item[data-level="ALTO"] { border-left-color: var(--orange); }
+    .alert-item[data-level="MÉDIO"] { border-left-color: var(--yellow); }
+    .alert-item[data-level="BAIXO"] { border-left-color: var(--blue); }
+    .alert-item[data-level="INFORMATIVO"] { border-left-color: var(--green); }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+      padding: 5px 4px env(safe-area-inset-bottom);
+      border-top: 1px solid var(--line);
+      background: rgba(7, 16, 24, .97);
+      backdrop-filter: blur(14px);
+    }
+    .nav-btn {
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--muted);
+      min-width: 0;
+      padding: 6px 2px;
+      cursor: pointer;
+    }
+    .nav-btn .nav-icon { display: block; font-size: 1.18rem; line-height: 1.05; }
+    .nav-btn .nav-label { display: block; font-size: .58rem; font-weight: 750; margin-top: 4px; white-space: nowrap; }
+    .nav-btn.active { color: var(--blue); background: rgba(41,168,255,.1); }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      background: rgba(0, 0, 0, .72);
+    }
+    .modal {
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 760px);
+      max-height: 94vh;
+      border: 1px solid var(--line);
+      border-radius: 18px 18px 0 0;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line-soft); }
+    .modal-head h2 { margin: 0; font-size: 1.05rem; }
+    .modal-body { overflow-y: auto; overscroll-behavior: contain; padding: 14px; }
+    .modal-foot { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line-soft); }
+    .modal-foot .btn { flex: 1 1 120px; }
+
+    .intro {
+      position: fixed;
+      z-index: 200;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(41,168,255,.2), transparent 42%),
+        #061018;
+    }
+    .intro-card { width: min(100%, 520px); text-align: center; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); padding: 26px 18px; box-shadow: var(--shadow); }
+    .intro-mark { width: 72px; height: 72px; margin: 0 auto 18px; display: grid; place-items: center; border: 2px solid var(--blue); border-radius: 18px; color: var(--blue); font: 900 1.4rem/1 ui-monospace, monospace; box-shadow: 0 0 30px rgba(41,168,255,.18); }
+
+    .toast {
+      position: fixed;
+      z-index: 300;
+      left: 50%;
+      bottom: calc(var(--nav-h) + 14px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(calc(100% - 24px), 520px);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 13px;
+      background: #132331;
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .image-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+    .image-tile { position: relative; aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: #050c12; }
+    .image-tile img { width: 100%; height: 100%; object-fit: cover; }
+    .image-tile button { position: absolute; top: 5px; right: 5px; min-width: 34px; min-height: 34px; border: 0; border-radius: 50%; color: white; background: rgba(100,0,10,.85); }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .comparison-value { font-size: .86rem; border-top: 1px solid var(--line-soft); padding: 7px 0; }
+    .comparison-value strong { display: block; color: var(--muted); font-size: .68rem; text-transform: uppercase; }
+
+    .inspection-item { border: 1px solid var(--line-soft); border-radius: 10px; padding: 11px; margin-bottom: 8px; }
+    .inspection-item.unverified { border-color: var(--yellow); background: rgba(242,191,67,.05); }
+    .score-buttons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 8px 0; }
+    .score-buttons button { min-height: 40px; border: 1px solid var(--line); border-radius: 7px; color: var(--text); background: #09141d; }
+    .score-buttons button.selected { border-color: var(--blue); background: var(--blue-2); }
+
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line-soft); }
+    th { color: var(--muted); text-transform: uppercase; font-size: .68rem; }
+
+    .storage-meter { margin-top: 8px; }
+    .autosave { position: fixed; right: 10px; bottom: calc(var(--nav-h) + 10px); z-index: 48; border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; color: var(--green); background: var(--surface); font-size: .68rem; opacity: 0; transition: opacity .25s; pointer-events: none; }
+    .autosave.show { opacity: 1; }
+
+    @media (min-width: 560px) {
+      main { padding-inline: 18px; }
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+      .form-grid .wide { grid-column: 1 / -1; }
+      .grid.two { grid-template-columns: repeat(2, 1fr); }
+      .grid.three { grid-template-columns: repeat(3, 1fr); }
+      .grid.four { grid-template-columns: repeat(2, 1fr); }
+      .compare-grid { grid-template-columns: repeat(2, 1fr); }
+      .image-grid { grid-template-columns: repeat(3, 1fr); }
+      .modal-backdrop { align-items: center; padding: 14px; }
+      .modal { border-radius: 18px; }
+    }
+
+    @media (min-width: 900px) {
+      .grid.four { grid-template-columns: repeat(4, 1fr); }
+      .compare-grid { grid-template-columns: repeat(3, 1fr); }
+      .bottom-nav { left: 50%; right: auto; width: min(650px, 100%); transform: translateX(-50%); border: 1px solid var(--line); border-bottom: 0; border-radius: 16px 16px 0 0; }
+    }
+
+    @media print {
+      :root { color-scheme: light; }
+      body { color: #111; background: #fff; padding: 0; font-size: 11pt; }
+      .app-header, .bottom-nav, .no-print, .toast, .autosave { display: none !important; }
+      main { width: 100%; max-width: none; padding: 0; }
+      .card, details { color: #111; background: #fff; box-shadow: none; border: 1px solid #aaa; break-inside: avoid; }
+      .muted, small { color: #444 !important; }
+      .badge, .chip { color: #111; border-color: #777; }
+      details > * { display: block !important; }
+      a { color: #111; text-decoration: none; }
+      @page { size: A4; margin: 12mm; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header no-print">
+    <div class="brand">
+      <strong>PROJETO VECTRA B</strong>
+      <span id="phaseLabel">Engenharia de Confiabilidade</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="alertsBtn" title="Central de alertas" aria-label="Central de alertas">⚠</button>
+      <button class="icon-btn" id="settingsBtn" title="Configurações e dados" aria-label="Configurações e dados">⚙</button>
+    </div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <nav class="bottom-nav no-print" aria-label="Navegação principal">
+    <button class="nav-btn active" data-route="home"><span class="nav-icon">⌂</span><span class="nav-label">INÍCIO</span></button>
+    <button class="nav-btn" data-route="acquisition"><span class="nav-icon">⌕</span><span class="nav-label">AQUISIÇÃO</span></button>
+    <button class="nav-btn" data-route="repairs"><span class="nav-icon">⚒</span><span class="nav-label">REFORMA</span></button>
+    <button class="nav-btn" data-route="records"><span class="nav-icon">▤</span><span class="nav-label">REGISTROS</span></button>
+    <button class="nav-btn" data-route="parts"><span class="nav-icon">▣</span><span class="nav-label">ESTOQUE</span></button>
+  </nav>
+
+  <div class="autosave no-print" id="autosave">Salvo</div>
+  <div class="toast hidden no-print" id="toast" role="status"></div>
+  <div id="modalRoot"></div>
+
+  <section class="intro hidden" id="intro">
+    <div class="intro-card">
+      <div class="intro-mark">VB</div>
+      <div class="eyebrow">Engenharia de Confiabilidade</div>
+      <h1>Projeto Vectra B</h1>
+      <p>Objetivo: adquirir, recuperar e manter um Vectra B confiável por aproximadamente 20 anos.</p>
+      <div class="button-row">
+        <button class="btn primary" id="startBtn">COMEÇAR</button>
+        <button class="btn" id="initialSettingsBtn">CONFIGURAÇÕES INICIAIS</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (() => {
+    "use strict";
+
+    // ===========================
+    // STATE
+    // ===========================
+    const APP_VERSION = "1.0.0";
+    const DB_NAME = "ProjetoVectraBDB";
+    const STORE_NAME = "app";
+    const STATE_KEY = "state";
+
+    const INSPECTION_DEFINITION = [
+      { id: "motor", label: "Motor", weight: 0.30, items: ["Partida fria", "Ruídos", "Fumaça", "Vazamentos", "Temperatura / arrefecimento", "Desempenho"] },
+      { id: "structure", label: "Estrutura / carroceria", weight: 0.25, items: ["Longarinas e pontos estruturais", "Corrosão", "Alinhamento da carroceria", "Assoalho e caixas de roda", "Sinais de reparo estrutural"] },
+      { id: "transmission", label: "Câmbio / embreagem", weight: 0.20, items: ["Engates", "Ruídos do câmbio", "Patinação da embreagem", "Curso do pedal", "Vazamentos"] },
+      { id: "electrical", label: "Elétrica", weight: 0.10, items: ["Bateria e carga", "Painel e luzes", "Vidros e travas", "Chicotes e adaptações", "Códigos OBD2"] },
+      { id: "suspension", label: "Suspensão / direção / freios", weight: 0.10, items: ["Suspensão", "Direção", "Freios", "Pneus — estado geral", "Teste de rodagem"] },
+      { id: "finish", label: "Acabamento / interior", weight: 0.05, items: ["Bancos e forrações", "Painel", "Vedação", "Pintura / estética", "Comandos internos"] },
+      { id: "ac", label: "Ar-condicionado", weight: 0, items: ["Funcionamento", "Ruídos", "Vazamentos aparentes"] }
+    ];
+
+    const PRIORITY_ORDER = { "SEGURANÇA": 1, "CONFIABILIDADE": 2, "CONFORTO": 3, "ESTÉTICA": 4 };
+    const ALERT_ORDER = { "CRÍTICO": 1, "ALTO": 2, "MÉDIO": 3, "BAIXO": 4, "INFORMATIVO": 5 };
+
+    let state = null;
+    let db = null;
+    let saveTimer = null;
+    let toastTimer = null;
+    let currentRoute = "home";
+    let currentRecordFilter = "TODOS";
+
+    function dateForMonthOffset(offset) {
+      const date = new Date();
+      date.setDate(1);
+      date.setMonth(date.getMonth() + offset);
+      return localDateISO(date);
+    }
+
+    function createDefaultState() {
+      const createdAt = new Date().toISOString();
+      return {
+        meta: { version: APP_VERSION, createdAt, updatedAt: createdAt, firstUseComplete: false, lastBackup: "", importantChange: false },
+        settings: {
+          phase: "AQUISIÇÃO",
+          ownHourValue: 40,
+          garageMonthly: 100,
+          maxInstallment: 1000,
+          monthlyKmMin: 650,
+          monthlyKmMax: 850,
+          oilKm: 5000,
+          oilMonths: 6,
+          autonomyAlertPercent: 15,
+          searchRadiusKm: 100,
+          projectYears: 20,
+          defaultFuel: "Gasolina",
+          fmeaLowMax: 100,
+          fmeaMediumMax: 300,
+          includeReusableTools: false,
+          maxMonthlySpend: 0
+        },
+        finance: { currentReserve: 5000, acquisitionExpenses: 0, ignoredAlerts: [], loanSimulation: null },
+        contributions: [
+          { id: uid(), date: dateForMonthOffset(1), status: "GARANTIDO", min: 2000, max: 2000, description: "Aporte garantido (configuração inicial)" },
+          { id: uid(), date: dateForMonthOffset(2), status: "PROVÁVEL", min: 2000, max: 3000, description: "Aporte provável (configuração inicial)" },
+          { id: uid(), date: dateForMonthOffset(5), status: "PROVÁVEL", min: 3000, max: 3000, description: "Aporte provável (configuração inicial)" }
+        ],
+        candidates: [], inspections: [], vehicle: null, repairs: [], records: [], failures: [], fmea: [], parts: [], partQuotes: [],
+        tools: [], services: [], fuelLogs: [], documents: [], insuranceQuotes: [], modifications: [], decisions: [], patrimonialHistory: [],
+        oilLogs: [], fluids: [], beltLogs: [], alerts: [], backupsMetadata: []
+      };
+    }
+
+    // ===========================
+    // STORAGE
+    // ===========================
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = event => {
+          const database = event.target.result;
+          if (!database.objectStoreNames.contains(STORE_NAME)) database.createObjectStore(STORE_NAME, { keyPath: "id" });
+        };
+        request.onsuccess = () => { db = request.result; resolve(db); };
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function idbGet(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readonly");
+        const request = tx.objectStore(STORE_NAME).get(id);
+        request.onsuccess = () => resolve(request.result ? request.result.value : null);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function idbSet(id, value) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        tx.objectStore(STORE_NAME).put({ id, value });
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function loadState() {
+      try {
+        await openDatabase();
+        state = await idbGet(STATE_KEY);
+      } catch (error) {
+        console.warn("IndexedDB indisponível; usando localStorage como contingência.", error);
+        try { state = JSON.parse(localStorage.getItem("vectraBState")); } catch (_) { state = null; }
+      }
+      if (!state) state = createDefaultState();
+      migrateState();
+    }
+
+    function migrateState() {
+      const defaults = createDefaultState();
+      state.meta = { ...defaults.meta, ...(state.meta || {}), version: APP_VERSION };
+      state.settings = { ...defaults.settings, ...(state.settings || {}) };
+      state.finance = { ...defaults.finance, ...(state.finance || {}) };
+      ["contributions", "candidates", "inspections", "repairs", "records", "failures", "fmea", "parts", "partQuotes", "tools", "services", "fuelLogs", "documents", "insuranceQuotes", "modifications", "decisions", "patrimonialHistory", "oilLogs", "fluids", "beltLogs", "alerts", "backupsMetadata"].forEach(key => {
+        if (!Array.isArray(state[key])) state[key] = [];
+      });
+      if (state.vehicle === undefined) state.vehicle = null;
+    }
+
+    async function persistState(showIndicator = true) {
+      state.meta.updatedAt = new Date().toISOString();
+      try {
+        if (db) await idbSet(STATE_KEY, state);
+        else localStorage.setItem("vectraBState", JSON.stringify(state));
+        if (showIndicator) showSaved();
+      } catch (error) {
+        console.error(error);
+        toast("Não foi possível salvar. Exporte um backup e verifique o espaço do navegador.", "error");
+      }
+    }
+
+    function scheduleSave(important = false) {
+      if (important) state.meta.importantChange = true;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => persistState(), 350);
+    }
+
+    // ===========================
+    // CALCULATIONS
+    // ===========================
+    function safeNumber(value, fallback = 0) {
+      const number = typeof value === "string" ? Number(value.replace(",", ".")) : Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function nonNegative(value) { return Math.max(0, safeNumber(value)); }
+
+    function candidateRepairs(candidateId, timing = null) {
+      return state.repairs.filter(item => item.candidateId === candidateId && (!timing || item.timing === timing));
+    }
+
+    function calculateRepairExpected(repair) {
+      const explicit = nonNegative(repair.estimatedCost);
+      const components = nonNegative(repair.partsCost) + nonNegative(repair.materialsCost) + nonNegative(repair.thirdPartyCost) + nonNegative(repair.toolCost);
+      return explicit || components;
+    }
+
+    function calculateRepairEconomic(repair) {
+      return calculateRepairExpected(repair) + nonNegative(repair.ownHours) * nonNegative(state.settings.ownHourValue);
+    }
+
+    function calculateInspection(candidateId) {
+      const inspection = state.inspections.find(item => item.candidateId === candidateId);
+      if (!inspection) return { score: 0, verified: 0, total: inspectionItemCount(), unverified: inspectionItemCount(), categories: {} };
+      let weightedSum = 0;
+      let activeWeight = 0;
+      let verified = 0;
+      const categories = {};
+      INSPECTION_DEFINITION.forEach(category => {
+        const scored = category.items.map((_, index) => inspection.items[`${category.id}-${index}`]).filter(item => item && item.verified && Number.isFinite(Number(item.score)));
+        const average = scored.length ? scored.reduce((sum, item) => sum + safeNumber(item.score), 0) / scored.length : 0;
+        categories[category.id] = { average, verified: scored.length, total: category.items.length };
+        verified += scored.length;
+        if (category.weight && scored.length) { weightedSum += average * category.weight; activeWeight += category.weight; }
+      });
+      return { score: activeWeight ? weightedSum / activeWeight : 0, verified, total: inspectionItemCount(), unverified: inspectionItemCount() - verified, categories };
+    }
+
+    function calculateRisk(candidate) {
+      const inspection = calculateInspection(candidate.id);
+      const unverifiedRate = inspection.total ? inspection.unverified / inspection.total : 1;
+      let points = unverifiedRate * 18;
+      const reasons = [];
+      if (inspection.unverified > 0) reasons.push(`${inspection.unverified} item(ns) da inspeção não verificado(s)`);
+      if (!candidate.historyKnown) { points += 8; reasons.push("histórico ausente ou incompleto"); }
+      const contradictions = nonNegative(candidate.contradictions);
+      if (contradictions) { points += Math.min(15, contradictions * 4); reasons.push(`${contradictions} contradição(ões) registrada(s)`); }
+      const criticalRepairs = candidateRepairs(candidate.id).filter(r => r.priority === "SEGURANÇA" || nonNegative(r.severity) >= 4);
+      if (criticalRepairs.length) { points += Math.min(20, criticalRepairs.length * 5); reasons.push(`${criticalRepairs.length} reparo(s) crítico(s)`); }
+      if (candidate.coldEngine === "AQUECIDO") { points += 5; reasons.push("motor aquecido antes da visita"); }
+      if (candidate.testDrive !== "SIM") { points += 10; reasons.push("teste de rodagem não confirmado"); }
+      const autoValue = Math.round(nonNegative(candidate.askingPrice) * Math.min(.30, points / 200));
+      const manual = candidate.manualRiskEnabled ? nonNegative(candidate.manualRiskValue) : autoValue;
+      return { value: manual, automaticValue: autoValue, points: Math.round(points), reasons: reasons.length ? reasons : ["sem fatores adicionais registrados"] };
+    }
+
+    function calculateAcquisitionCost(candidate, negotiatedPrice = null) {
+      const price = negotiatedPrice === null ? nonNegative(candidate.negotiatedPrice || candidate.askingPrice) : nonNegative(negotiatedPrice);
+      const immediateRepairs = candidateRepairs(candidate.id, "IMEDIATO").reduce((sum, repair) => sum + calculateRepairExpected(repair), 0);
+      const specificTools = candidateRepairs(candidate.id, "IMEDIATO").reduce((sum, repair) => sum + nonNegative(repair.toolCost), 0);
+      const risk = calculateRisk(candidate).value;
+      const total = price + nonNegative(candidate.transportCost) + nonNegative(candidate.documentCost) + nonNegative(candidate.debts) + nonNegative(candidate.transferCost) + nonNegative(candidate.initialInsurance) + immediateRepairs + specificTools + risk;
+      const ownHours = candidateRepairs(candidate.id, "IMEDIATO").reduce((sum, repair) => sum + nonNegative(repair.ownHours), 0);
+      return { price, immediateRepairs, specificTools, risk, total, economicTotal: total + ownHours * nonNegative(state.settings.ownHourValue), ownHours };
+    }
+
+    function calculateAdReliability(candidate) {
+      let score = 100;
+      const alerts = [];
+      const penalties = [
+        [candidate.priceOutlier, 15, "Preço fora do padrão informado"],
+        [nonNegative(candidate.contradictions) > 0, Math.min(25, nonNegative(candidate.contradictions) * 7), "Informações contraditórias"],
+        [candidate.pressurePayment, 25, "Pressão por pagamento"],
+        [candidate.refusesInspection, 30, "Recusa de vistoria"],
+        [candidate.ownerUnknown, 20, "Proprietário não identificado"],
+        [!candidate.sellerName, 5, "Vendedor não identificado"],
+        [!candidate.mileage, 4, "Quilometragem ausente"],
+        [!candidate.link && !candidate.adText, 4, "Origem do anúncio pouco documentada"]
+      ];
+      penalties.forEach(([condition, value, text]) => { if (condition) { score -= value; alerts.push(text); } });
+      return { score: Math.max(0, Math.round(score)), alerts };
+    }
+
+    function documentStatus(candidate) {
+      if (candidate.transferImpossible || candidate.documentationStatus === "IRREGULAR") return "IRREGULAR";
+      const required = [candidate.docRegular, candidate.ownerApt, candidate.chassisChecked, candidate.engineChecked, candidate.transferViable];
+      return required.every(Boolean) ? "CONFIRMADA" : "NÃO CONFIRMADA";
+    }
+
+    function recommendation(candidate) {
+      const docs = documentStatus(candidate);
+      if (docs === "IRREGULAR") return "REPROVAR";
+      if (candidate.runs !== true || candidate.testDrive !== "SIM") return "REPROVAR";
+      if (docs !== "CONFIRMADA") return "NEGOCIAR";
+      const score = calculateInspection(candidate.id).score;
+      const risk = calculateRisk(candidate).points;
+      if (score && score < 2.2) return "LEVAR AO MECÂNICO";
+      if (risk > 28) return "LEVAR AO MECÂNICO";
+      return "COMPRAR";
+    }
+
+    function calculateOffers(candidate) {
+      const asking = nonNegative(candidate.askingPrice);
+      const fipe = nonNegative(candidate.fipe);
+      const peers = state.candidates.filter(item => item.id !== candidate.id && nonNegative(item.askingPrice) > 0);
+      const peerAverage = peers.length ? peers.reduce((sum, item) => sum + nonNegative(item.askingPrice), 0) / peers.length : 0;
+      const repairs = candidateRepairs(candidate.id).reduce((sum, item) => sum + calculateRepairExpected(item), 0);
+      const extras = nonNegative(candidate.transportCost) + nonNegative(candidate.documentCost) + nonNegative(candidate.debts) + nonNegative(candidate.transferCost) + calculateRisk(candidate).value;
+      const references = [asking, fipe, peerAverage].filter(value => value > 0);
+      if (!references.length) return { aggressive: null, fair: null, maximum: null, basis: "Sem preço pedido, FIPE ou semelhantes informados." };
+      const base = Math.min(...references);
+      const maximum = Math.max(0, base - repairs - extras);
+      return {
+        aggressive: Math.max(0, maximum * .88),
+        fair: Math.max(0, maximum * .95),
+        maximum,
+        basis: `Referência menor: ${money(base)}; reparos e custos abatidos: ${money(repairs + extras)}.`
+      };
+    }
+
+    function projectReserve(months = 12) {
+      const start = new Date();
+      start.setDate(1);
+      const result = [];
+      let conservative = nonNegative(state.finance.currentReserve);
+      let optimistic = conservative;
+      for (let i = 0; i < months; i++) {
+        const date = new Date(start); date.setMonth(start.getMonth() + i);
+        const monthKey = date.toISOString().slice(0, 7);
+        state.contributions.filter(item => String(item.date || "").slice(0, 7) === monthKey && item.status !== "DISPONÍVEL").forEach(item => {
+          if (item.status === "GARANTIDO") { conservative += nonNegative(item.min); optimistic += nonNegative(item.max || item.min); }
+          if (item.status === "PROVÁVEL") optimistic += nonNegative(item.max || item.min);
+        });
+        result.push({ date: monthKey, conservative, optimistic });
+      }
+      return result;
+    }
+
+    function safePurchaseMaximum() {
+      const reserve = nonNegative(state.finance.currentReserve);
+      const emergencyBuffer = Math.max(500, reserve * .15);
+      return Math.max(0, reserve - emergencyBuffer);
+    }
+
+    function loanPayment(principal, monthlyRate, periods) {
+      principal = nonNegative(principal); monthlyRate = nonNegative(monthlyRate) / 100; periods = Math.max(1, Math.round(nonNegative(periods)));
+      if (!monthlyRate) return principal / periods;
+      return principal * monthlyRate * Math.pow(1 + monthlyRate, periods) / (Math.pow(1 + monthlyRate, periods) - 1);
+    }
+
+    function simulateLoan(data) {
+      const principal = nonNegative(data.principal);
+      const rate = nonNegative(data.rate);
+      const periods = Math.max(1, Math.round(nonNegative(data.periods)));
+      const fees = nonNegative(data.fees) + nonNegative(data.insurance);
+      const installment = loanPayment(principal, rate, periods);
+      const total = installment * periods + fees;
+      return { principal, rate, periods, installment, fees, total, interest: Math.max(0, total - principal - fees) };
+    }
+
+    function amortizationComparison(data) {
+      const base = simulateLoan(data);
+      const extra = nonNegative(data.extraPayment);
+      const after = Math.max(0, Math.round(nonNegative(data.extraAfter || 1)));
+      if (!extra || after >= base.periods) return { base, reduceTerm: base, reducePayment: base, savingTerm: 0, savingPayment: 0 };
+      const monthlyRate = base.rate / 100;
+      let balance = base.principal;
+      let paidBefore = 0;
+      for (let i = 0; i < after && balance > 0; i++) {
+        const interest = balance * monthlyRate;
+        const principalPart = Math.max(0, base.installment - interest);
+        balance = Math.max(0, balance - principalPart);
+        paidBefore += base.installment;
+      }
+      balance = Math.max(0, balance - extra);
+      let termBalance = balance, remainingTerm = 0, termPaid = paidBefore + extra;
+      while (termBalance > .01 && remainingTerm < 1200) {
+        const interest = termBalance * monthlyRate;
+        const payment = Math.min(base.installment, termBalance + interest);
+        const principalPart = Math.max(0, payment - interest);
+        termBalance = Math.max(0, termBalance - principalPart);
+        termPaid += payment;
+        remainingTerm++;
+      }
+      const remainingOriginal = Math.max(1, base.periods - after);
+      const reducedPayment = loanPayment(balance, base.rate, remainingOriginal);
+      const paymentTotal = paidBefore + extra + reducedPayment * remainingOriginal + base.fees;
+      const termTotal = termPaid + base.fees;
+      return {
+        base,
+        reduceTerm: { ...base, periods: after + remainingTerm, installment: base.installment, total: termTotal, interest: Math.max(0, termTotal - base.principal - base.fees) },
+        reducePayment: { ...base, periods: base.periods, installment: reducedPayment, total: paymentTotal, interest: Math.max(0, paymentTotal - base.principal - base.fees) },
+        savingTerm: Math.max(0, base.total - termTotal),
+        savingPayment: Math.max(0, base.total - paymentTotal)
+      };
+    }
+
+    function calculateFuelMetrics() {
+      const full = [...state.fuelLogs].filter(item => item.fullTank && nonNegative(item.km) > 0 && nonNegative(item.liters) > 0).sort((a,b) => nonNegative(a.km) - nonNegative(b.km));
+      return full.map((log, index) => {
+        if (!index) return { ...log, consumption: null, costKm: null, realRange: null, difference: null };
+        const previous = full[index - 1];
+        const distance = nonNegative(log.km) - nonNegative(previous.km);
+        const consumption = distance > 0 ? distance / nonNegative(log.liters) : null;
+        const costKm = distance > 0 ? nonNegative(log.total) / distance : null;
+        const realRange = consumption && nonNegative(log.tankCapacity) ? consumption * nonNegative(log.tankCapacity) : null;
+        const indicated = nonNegative(log.indicatedRange);
+        const difference = realRange && indicated ? Math.abs(realRange - indicated) / realRange * 100 : null;
+        return { ...log, distance, consumption, costKm, realRange, difference };
+      });
+    }
+
+    function calculateFmea(item) {
+      const severity = clamp(Math.round(nonNegative(item.severity)), 1, 10);
+      const occurrence = clamp(Math.round(nonNegative(item.occurrence)), 1, 10);
+      const detection = clamp(Math.round(nonNegative(item.detection)), 1, 10);
+      const npr = severity * occurrence * detection;
+      let band = npr <= nonNegative(state.settings.fmeaLowMax) ? "BAIXO" : npr <= nonNegative(state.settings.fmeaMediumMax) ? "MÉDIO" : "ALTO";
+      if (severity >= 9) band = "ALTO";
+      return { severity, occurrence, detection, npr, band };
+    }
+
+    function calculateRepairProgress() {
+      const result = {};
+      Object.keys(PRIORITY_ORDER).forEach(priority => {
+        const list = state.repairs.filter(item => item.priority === priority && !item.candidateId);
+        const complete = list.filter(item => item.status === "RESOLVIDO").length;
+        result[priority] = { total: list.length, complete, percent: list.length ? complete / list.length * 100 : 0, spent: list.reduce((s,r) => s + nonNegative(r.actualCost), 0), remaining: list.filter(r => r.status !== "RESOLVIDO").reduce((s,r) => s + calculateRepairExpected(r), 0) };
+      });
+      return result;
+    }
+
+    function recommendedRepair() {
+      return state.repairs.filter(item => !item.candidateId && item.status !== "RESOLVIDO").sort((a,b) => {
+        const priority = (PRIORITY_ORDER[a.priority] || 9) - (PRIORITY_ORDER[b.priority] || 9);
+        if (priority) return priority;
+        const criticality = nonNegative(b.severity) - nonNegative(a.severity);
+        if (criticality) return criticality;
+        const affordableA = calculateRepairExpected(a) <= nonNegative(state.finance.currentReserve) ? 0 : 1;
+        const affordableB = calculateRepairExpected(b) <= nonNegative(state.finance.currentReserve) ? 0 : 1;
+        return affordableA - affordableB;
+      })[0] || null;
+    }
+
+    function calculateGnv(data) {
+      const monthlyKm = nonNegative(data.monthlyKm);
+      const gasConsumption = nonNegative(data.gasConsumption);
+      const gasPrice = nonNegative(data.gasPrice);
+      const gnvConsumption = nonNegative(data.gnvConsumption);
+      const gnvPrice = nonNegative(data.gnvPrice);
+      const gasCostKm = gasConsumption ? gasPrice / gasConsumption : null;
+      const gnvCostKm = gnvConsumption ? gnvPrice / gnvConsumption : null;
+      const monthlySavings = gasCostKm !== null && gnvCostKm !== null ? Math.max(0, (gasCostKm - gnvCostKm) * monthlyKm - nonNegative(data.extraMonthly)) : null;
+      const investment = nonNegative(data.kitCost) + nonNegative(data.documentCost) + nonNegative(data.inspectionCost);
+      const payback = monthlySavings > 0 ? investment / monthlySavings : null;
+      return { gasCostKm, gnvCostKm, monthlySavings, annualSavings: monthlySavings === null ? null : monthlySavings * 12, payback };
+    }
+
+    function calculateProjectCosts() {
+      const fuel = state.fuelLogs.reduce((s,x) => s + nonNegative(x.total), 0);
+      const maintenance = state.repairs.reduce((s,x) => s + nonNegative(x.actualCost), 0) + state.records.filter(x => x.type === "MANUTENÇÃO" || x.type === "SERVIÇO").reduce((s,x) => s + nonNegative(x.cost), 0);
+      const insurance = state.insuranceQuotes.filter(x => x.purchased).reduce((s,x) => s + nonNegative(x.annualPrice), 0);
+      const other = state.records.filter(x => x.type === "DESPESA").reduce((s,x) => s + nonNegative(x.cost), 0);
+      const km = state.vehicle ? Math.max(0, nonNegative(state.vehicle.currentKm) - nonNegative(state.vehicle.purchaseKm)) : 0;
+      const operational = fuel + maintenance + insurance + other + nonNegative(state.settings.garageMonthly) * monthsSince(state.vehicle?.purchaseDate);
+      const acquisition = state.vehicle ? nonNegative(state.vehicle.acquisitionTotal) : 0;
+      const tools = state.tools.reduce((s,x) => s + nonNegative(x.price), 0);
+      return { km, operational, acquisition, tools, operationalPerKm: km ? operational / km : null, totalPerKm: km ? (operational + acquisition + (state.settings.includeReusableTools ? tools : 0)) / km : null };
+    }
+
+    // ===========================
+    // VALIDATION
+    // ===========================
+    function validateForm(form) {
+      let valid = true;
+      form.querySelectorAll("[required]").forEach(field => {
+        const ok = String(field.value || "").trim() !== "";
+        field.classList.toggle("invalid", !ok);
+        if (!ok) valid = false;
+      });
+      form.querySelectorAll("input[type='number']").forEach(field => {
+        const value = safeNumber(field.value);
+        const ok = field.value === "" || (Number.isFinite(value) && (field.min === "" || value >= safeNumber(field.min)));
+        field.classList.toggle("invalid", !ok);
+        if (!ok) valid = false;
+      });
+      if (!valid) toast("Revise os campos obrigatórios ou inválidos.", "error");
+      return valid;
+    }
+
+    function ensurePurchaseEligible(candidate) {
+      if (documentStatus(candidate) !== "CONFIRMADA") { toast("A compra exige documentação confirmada e transferência viável.", "error"); return false; }
+      if (!candidate.docCheckedToday) { toast("Confirme uma nova consulta documental no dia da compra.", "error"); return false; }
+      if (!candidate.runs || candidate.testDrive !== "SIM") { toast("O veículo precisa funcionar e permitir teste de rodagem.", "error"); return false; }
+      return true;
+    }
+
+    // ===========================
+    // UTILS
+    // ===========================
+    function uid() { return (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`); }
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+    function inspectionItemCount() { return INSPECTION_DEFINITION.reduce((sum, category) => sum + category.items.length, 0); }
+    function byId(id) { return document.getElementById(id); }
+    function escapeHtml(value = "") { return String(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char])); }
+    function attr(value = "") { return escapeHtml(value); }
+    function money(value) { const n = safeNumber(value); return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n); }
+    function number(value, digits = 1) { const n = safeNumber(value); return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: digits }).format(n); }
+    function optionalMoney(value) { return value === null || value === undefined || value === "" ? "Não informado" : money(value); }
+    function localDateISO(date = new Date()) { const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000); return d.toISOString().slice(0, 10); }
+    function dateLabel(value) { if (!value) return "Não informado"; const parts = String(value).slice(0,10).split("-"); return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : escapeHtml(value); }
+    function monthLabel(value) { if (!value) return ""; const [year, month] = value.split("-"); return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString("pt-BR", { month: "short", year: "numeric" }); }
+    function monthsSince(value) { if (!value) return 0; const start = new Date(`${value}T12:00:00`); const now = new Date(); return Math.max(0, (now.getFullYear()-start.getFullYear())*12 + now.getMonth()-start.getMonth()); }
+    function truncate(text, length = 100) { const value = String(text || ""); return value.length > length ? `${value.slice(0,length)}…` : value; }
+    function getFormData(form) { const data = {}; new FormData(form).forEach((value,key) => { data[key] = value; }); form.querySelectorAll("input[type='checkbox']").forEach(el => { data[el.name] = el.checked; }); return data; }
+    function candidateName(candidate) { return `${candidate.version || "Vectra B"}${candidate.yearModel ? ` ${candidate.yearModel}` : ""}`; }
+    function badge(text, color = "blue") { return `<span class="badge ${color}">${escapeHtml(text)}</span>`; }
+    function statusColor(text) { return ["COMPRAR","CONFIRMADA","RESOLVIDO","RECEBIDA","ARMAZENADA"].includes(text) ? "green" : ["REPROVAR","IRREGULAR","NÃO RESOLVIDO","CRÍTICO","ALTO"].includes(text) ? "red" : "yellow"; }
+    function emptyState(title, text, buttonHtml = "") { return `<div class="empty"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(text)}</span>${buttonHtml ? `<div class="section">${buttonHtml}</div>` : ""}</div>`; }
+    function selectOptions(options, selected) { return options.map(option => { const value = typeof option === "string" ? option : option.value; const label = typeof option === "string" ? option : option.label; return `<option value="${attr(value)}" ${String(value) === String(selected) ? "selected" : ""}>${escapeHtml(label)}</option>`; }).join(""); }
+    function showSaved() { const el = byId("autosave"); el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 900); }
+    function toast(message, type = "info") { const el = byId("toast"); el.textContent = message; el.style.borderColor = type === "error" ? "var(--red)" : type === "success" ? "var(--green)" : "var(--blue)"; el.classList.remove("hidden"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.add("hidden"), 3200); }
+    function confirmAction(message) { return window.confirm(message); }
+    function downloadBlob(blob, filename) { const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename; document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
+    function storageEstimate() { const json = JSON.stringify(state); const bytes = new Blob([json]).size; const images = state.candidates.reduce((sum,c) => sum + (c.images || []).length, 0); return { bytes, images, label: bytes < 1048576 ? `${number(bytes/1024,0)} KB` : `${number(bytes/1048576,1)} MB` }; }
+    function logDecision(decision, context, alternative = "", justification = "", values = "") { state.decisions.unshift({ id: uid(), date: new Date().toISOString(), decision, context, alternative, justification, values }); }
+    function findCandidate(id) { return state.candidates.find(item => item.id === id); }
+    function findRepair(id) { return state.repairs.find(item => item.id === id); }
+    function findPart(id) { return state.parts.find(item => item.id === id); }
+    function parseMoneyText(text) { const matches = String(text).match(/R\$\s*([\d.]+(?:,\d{1,2})?)/i); return matches ? safeNumber(matches[1].replace(/\./g, "").replace(",", ".")) : 0; }
+    function extractAdData(text) {
+      const clean = String(text || "");
+      const years = clean.match(/\b(19\d{2}|20\d{2})(?:\s*[\/\-]\s*(\d{2,4}))?\b/);
+      const km = clean.match(/([\d.]{2,})\s*(?:km|quilômetros|quilometragem)/i);
+      const motor = clean.match(/\b(2[.,][02])\b/);
+      const valves = clean.match(/\b(8|16)\s*[vV](?:álvulas)?\b/i);
+      const defects = clean.split(/[.!?\n]+/).filter(line => /(defeito|vazamento|ruído|fumaça|não funciona|precisa|problema|avaria|sinistro|leilão)/i.test(line)).slice(0,6).join("; ");
+      const inconsistencies = [];
+      if (/automátic/i.test(clean)) inconsistencies.push("Anúncio menciona câmbio automático — fora do perfil principal.");
+      if (/não liga|motor desmontado|sem motor/i.test(clean)) inconsistencies.push("Pode não atender à condição mínima de ligar e permitir teste.");
+      return { price: parseMoneyText(clean), yearMake: years ? safeNumber(years[1]) : "", yearModel: years ? safeNumber(years[2] ? (years[2].length === 2 ? `${String(years[1]).slice(0,2)}${years[2]}` : years[2]) : years[1]) : "", mileage: km ? safeNumber(km[1].replace(/\./g,"")) : "", motor: motor ? motor[1].replace(",", ".") : "", valves: valves ? valves[1] : "", defects, inconsistencies: inconsistencies.join(" ") };
+    }
+
+    function compressImage(file, maxDimension = 1280, quality = .72) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = reject;
+          image.onload = () => {
+            let width = image.width, height = image.height;
+            const scale = Math.min(1, maxDimension / Math.max(width, height));
+            width = Math.round(width * scale); height = Math.round(height * scale);
+            const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height;
+            canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+            resolve({ id: uid(), name: file.name, type: "image/jpeg", data: canvas.toDataURL("image/jpeg", quality), originalBytes: file.size, compressedBytes: Math.round(canvas.toDataURL("image/jpeg", quality).length * .75) });
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ===========================
+    // RENDER
+    // ===========================
+    function render() {
+      buildAlerts();
+      const app = byId("app");
+      const renderers = { home: renderHome, acquisition: renderAcquisition, repairs: renderRepairs, records: renderRecords, parts: renderParts };
+      app.innerHTML = (renderers[currentRoute] || renderHome)();
+      document.querySelectorAll(".nav-btn").forEach(button => button.classList.toggle("active", button.dataset.route === currentRoute));
+      byId("phaseLabel").textContent = state.vehicle ? "Fase Reforma / Operação" : "Fase Aquisição";
+    }
+
+    function buildAlerts() {
+      const alerts = [];
+      const now = new Date();
+      if (!state.meta.lastBackup || (now - new Date(state.meta.lastBackup)) / 86400000 > 30) alerts.push({ id: "backup", level: "MÉDIO", title: "Backup pendente", due: "", text: state.meta.lastBackup ? "O último backup tem mais de 30 dias." : "Nenhum backup foi exportado ainda." });
+      state.candidates.forEach(candidate => {
+        const docs = documentStatus(candidate);
+        if (docs === "IRREGULAR") alerts.push({ id: `doc-${candidate.id}`, level: "CRÍTICO", title: `${candidateName(candidate)}: documentação irregular`, due: "", text: "Transferência inviável ou irregularidade confirmada." });
+        else if (docs !== "CONFIRMADA") alerts.push({ id: `doc-${candidate.id}`, level: "ALTO", title: `${candidateName(candidate)}: documentação não confirmada`, due: "", text: "Não pode receber recomendação COMPRAR." });
+      });
+      if (state.vehicle && !state.beltLogs.length) alerts.push({ id: "belt", level: "CRÍTICO", title: "Correia dentada sem comprovação", due: "", text: "Trate como prioridade imediata até registrar comprovação confiável." });
+      if (state.vehicle && !state.oilLogs.length) alerts.push({ id: "oil-history", level: "ALTO", title: "Óleo do motor sem histórico registrado", due: "", text: `Intervalo inicial configurado: ${number(state.settings.oilKm, 0)} km ou ${number(state.settings.oilMonths, 0)} meses.` });
+      const lastOil = [...state.oilLogs].sort((a,b) => String(b.date).localeCompare(String(a.date)))[0];
+      if (lastOil) {
+        const dueKm = nonNegative(lastOil.km) + nonNegative(state.settings.oilKm);
+        const dueDate = new Date(`${lastOil.date}T12:00:00`); dueDate.setMonth(dueDate.getMonth() + nonNegative(state.settings.oilMonths));
+        if ((state.vehicle && nonNegative(state.vehicle.currentKm) >= dueKm) || now >= dueDate) alerts.push({ id: "oil-due", level: "ALTO", title: "Troca de óleo vencida", due: localDateISO(dueDate), text: `Vencimento por ${number(dueKm,0)} km ou ${dateLabel(localDateISO(dueDate))}, o que ocorresse primeiro.` });
+      }
+      state.fluids.filter(item => item.dueDate && new Date(`${item.dueDate}T23:59:59`) <= new Date(now.getTime() + 45 * 86400000)).forEach(item => alerts.push({ id: `fluid-${item.id}`, level: new Date(`${item.dueDate}T23:59:59`) < now ? "ALTO" : "MÉDIO", title: `Fluido a revisar: ${item.type}`, due: item.dueDate, text: item.specification || "Especificação não informada." }));
+      state.beltLogs.filter(item => (item.dueDate && new Date(`${item.dueDate}T23:59:59`) <= new Date(now.getTime() + 45 * 86400000)) || (state.vehicle && nonNegative(item.dueKm) && nonNegative(state.vehicle.currentKm) >= nonNegative(item.dueKm))).forEach(item => alerts.push({ id: `belt-${item.id}`, level: "CRÍTICO", title: "Correia dentada no limite registrado", due: item.dueDate || "", text: item.dueKm ? `Limite informado: ${number(item.dueKm,0)} km.` : "Data de troca/revisão atingida." }));
+      state.repairs.filter(item => item.followUpDate && item.status === "RESOLVIDO" && new Date(`${item.followUpDate}T23:59:59`) <= new Date(now.getTime() + 15 * 86400000)).forEach(item => alerts.push({ id: `repair-review-${item.id}`, level: "MÉDIO", title: `Validar reparo: ${item.title}`, due: item.followUpDate, text: item.validation || "Executar teste de validação e registrar possível reincidência." }));
+      state.repairs.filter(item => nonNegative(item.reincidences) >= 2).forEach(item => alerts.push({ id: `unreliable-${item.id}`, level: nonNegative(item.severity) >= 4 ? "CRÍTICO" : "ALTO", title: `Solução possivelmente não confiável: ${item.title}`, due: "", text: `Reincidências: ${number(item.reincidences,0)}. Compare reparar, substituir, adaptar equivalente ou investigar sistema relacionado.` }));
+      state.fmea.forEach(item => { const calc = calculateFmea(item); if (calc.band === "ALTO") alerts.push({ id: `fmea-${item.id}`, level: "ALTO", title: `FMEA prioritária: ${item.title}`, due: item.dueDate || "", text: `NPR ${calc.npr}; gravidade ${calc.severity}.` }); });
+      state.parts.forEach(part => {
+        if (nonNegative(part.quantity) < nonNegative(part.minimum)) alerts.push({ id: `part-${part.id}`, level: part.critical ? "ALTO" : "MÉDIO", title: `Estoque abaixo do mínimo: ${part.name}`, due: "", text: `${number(part.quantity,0)} disponível(is); mínimo ${number(part.minimum,0)}.` });
+        if (part.availability === "RARA" && part.critical) alerts.push({ id: `rare-${part.id}`, level: "ALTO", title: `Peça crítica rara: ${part.name}`, due: "", text: "Avalie aquisição para estoque estratégico." });
+        if (part.validity && new Date(`${part.validity}T23:59:59`) <= new Date(now.getTime() + 60 * 86400000)) alerts.push({ id: `validity-${part.id}`, level: "MÉDIO", title: `Validade/deterioração: ${part.name}`, due: part.validity, text: "Inspecione a condição da peça armazenada." });
+      });
+      state.documents.filter(doc => doc.dueDate && new Date(`${doc.dueDate}T23:59:59`) >= now).forEach(doc => {
+        const days = (new Date(`${doc.dueDate}T23:59:59`) - now) / 86400000;
+        if (days <= 45) alerts.push({ id: `document-${doc.id}`, level: days <= 10 ? "ALTO" : "MÉDIO", title: `Documento a vencer: ${doc.type}`, due: doc.dueDate, text: doc.notes || "Verifique a renovação/regularização." });
+      });
+      state.alerts = alerts.sort((a,b) => (ALERT_ORDER[a.level] || 9) - (ALERT_ORDER[b.level] || 9) || String(a.due || "9999").localeCompare(String(b.due || "9999")));
+    }
+
+    function renderHome() {
+      return state.vehicle ? renderReformDashboard() : renderAcquisitionDashboard();
+    }
+
+    function renderAcquisitionDashboard() {
+      const sorted = [...state.candidates].sort((a,b) => calculateAcquisitionCost(a).total - calculateAcquisitionCost(b).total);
+      const best = sorted.find(candidate => recommendation(candidate) !== "REPROVAR");
+      const projection = projectReserve(6);
+      return `
+        <div class="page-title"><div><div class="eyebrow">Fase atual</div><h1>Aquisição</h1><p class="muted">Decisão baseada em custo total viável, risco controlável e documentação regular.</p></div></div>
+        <div class="grid three">
+          <article class="card metric accent"><span class="label">Reserva disponível hoje</span><span class="value">${money(state.finance.currentReserve)}</span><span class="sub">Dinheiro futuro não incluído</span></article>
+          <article class="card metric"><span class="label">Melhor Vectra encontrado</span><span class="value">${best ? escapeHtml(candidateName(best)) : "A pesquisar"}</span><span class="sub">${best ? `Custo total ${money(calculateAcquisitionCost(best).total)}` : "Cadastre o primeiro anúncio"}</span></article>
+          <article class="card metric"><span class="label">Máximo seguro hoje</span><span class="value">${money(safePurchaseMaximum())}</span><span class="sub">Reserva menos colchão de 15% (mín. R$ 500)</span></article>
+        </div>
+        ${renderCriticalAlerts(3)}
+        <section class="section">
+          <div class="section-head"><h2>Linha do tempo financeira</h2><button class="btn small" data-action="open-finance">GERENCIAR</button></div>
+          <div class="card timeline">${projection.map(item => `<div class="timeline-item"><div class="timeline-dot"></div><div><strong>${monthLabel(item.date)}</strong><br><small>Conservador ${money(item.conservative)} · Otimista ${money(item.optimistic)}</small></div></div>`).join("")}</div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h2>Candidatos interessantes</h2><button class="btn primary small" data-action="new-candidate">NOVO ANÚNCIO</button></div>
+          ${sorted.length ? `<div class="list">${sorted.slice(0,3).map(renderCandidateCompact).join("")}</div>` : emptyState("Nenhum candidato cadastrado.", "Cadastre seu primeiro anúncio real para iniciar a triagem.", `<button class="btn primary" data-action="new-candidate">CADASTRAR ANÚNCIO</button>`)}
+        </section>
+        <section class="section card"><h2>Próximos passos</h2><div class="list">
+          <div class="list-item">1. Cadastre anúncios e confirme que o câmbio é manual.</div>
+          <div class="list-item">2. Faça a triagem documental antes de deslocar-se.</div>
+          <div class="list-item">3. Inspecione, estime reparos e compare o custo total.</div>
+        </div></section>`;
+    }
+
+    function renderReformDashboard() {
+      const progress = calculateRepairProgress();
+      const next = recommendedRepair();
+      const costs = calculateProjectCosts();
+      return `
+        <div class="page-title"><div><div class="eyebrow">Fase atual</div><h1>Reforma e confiabilidade</h1><p class="muted">${escapeHtml(candidateName(state.vehicle))} · ${number(state.vehicle.currentKm || state.vehicle.purchaseKm,0)} km</p></div></div>
+        <div class="grid three">
+          <article class="card metric accent"><span class="label">Próximo reparo prioritário</span><span class="value">${next ? escapeHtml(next.title) : "Nenhum pendente"}</span><span class="sub">${next ? `${next.priority} · ${money(calculateRepairExpected(next))}` : "Cadastre ou revise reparos"}</span></article>
+          <article class="card metric"><span class="label">Disponível / necessário</span><span class="value">${money(state.finance.currentReserve)}</span><span class="sub">Pendente: ${money(state.repairs.filter(r=>!r.candidateId && r.status!=="RESOLVIDO").reduce((s,r)=>s+calculateRepairExpected(r),0))}</span></article>
+          <article class="card metric"><span class="label">Custo operacional / km</span><span class="value">${costs.operationalPerKm === null ? "Aguardando km" : money(costs.operationalPerKm)}</span><span class="sub">Custo total/km: ${costs.totalPerKm === null ? "Não calculável" : money(costs.totalPerKm)}</span></article>
+        </div>
+        ${renderCriticalAlerts(4)}
+        <section class="section"><div class="section-head"><h2>Progresso da reforma</h2><button class="btn small" data-route-target="repairs">ABRIR REFORMA</button></div><div class="grid two">
+          ${Object.entries(progress).map(([key,value]) => `<div class="card"><div class="list-item-head"><strong>${key}</strong><span>${number(value.percent,0)}%</span></div><div class="progress ${key === "SEGURANÇA" ? "red" : key === "CONFIABILIDADE" ? "yellow" : ""}"><span style="width:${clamp(value.percent,0,100)}%"></span></div><small>${value.complete}/${value.total} · Gasto ${money(value.spent)} · Restante ${money(value.remaining)}</small></div>`).join("")}
+        </div></section>
+        <section class="section"><div class="section-head"><h2>Atalhos operacionais</h2></div><div class="grid two">
+          <button class="btn block" data-action="new-repair">NOVO REPARO</button>
+          <button class="btn block" data-action="new-record">NOVO REGISTRO</button>
+          <button class="btn block" data-action="open-costs">CUSTOS DO PROJETO</button>
+          <button class="btn block" data-action="open-reports">RELATÓRIOS</button>
+        </div></section>`;
+    }
+
+    function renderCriticalAlerts(limit = 5) {
+      const items = state.alerts.slice(0,limit);
+      if (!items.length) return "";
+      return `<section class="section"><div class="section-head"><h2>Alertas críticos</h2><button class="btn small" data-action="open-alerts">VER TODOS</button></div><div class="list">${items.map(alert => `<article class="list-item alert-item" data-level="${alert.level}"><div class="list-item-head"><div><strong>${escapeHtml(alert.title)}</strong><br><small>${escapeHtml(alert.text)}</small></div>${badge(alert.level,statusColor(alert.level))}</div>${alert.due ? `<small>Vencimento: ${dateLabel(alert.due)}</small>` : ""}</article>`).join("")}</div></section>`;
+    }
+
+    function renderCandidateCompact(candidate) {
+      const cost = calculateAcquisitionCost(candidate);
+      const inspection = calculateInspection(candidate.id);
+      const rec = recommendation(candidate);
+      return `<article class="list-item"><div class="list-item-head"><div><h3>${escapeHtml(candidateName(candidate))}</h3><small>${escapeHtml(candidate.city || "Local não informado")} · ${candidate.mileage ? `${number(candidate.mileage,0)} km` : "km não informado"}</small></div>${badge(rec,statusColor(rec))}</div><div class="chips"><span class="chip">Pedido ${money(candidate.askingPrice)}</span><span class="chip">Total ${money(cost.total)}</span><span class="chip">Nota ${inspection.verified ? number(inspection.score,1) : "não inspecionado"}</span></div><div class="list-actions"><button class="btn small" data-action="candidate-detail" data-id="${candidate.id}">ABRIR</button><button class="btn small" data-action="inspection" data-id="${candidate.id}">INSPEÇÃO</button></div></article>`;
+    }
+
+    function renderAcquisition() {
+      const sorted = [...state.candidates].sort((a,b) => calculateAcquisitionCost(a).total - calculateAcquisitionCost(b).total);
+      const compared = state.candidates.filter(item => item.compare);
+      return `
+        <div class="page-title"><div><div class="eyebrow">Anúncio → triagem → visita → inspeção</div><h1>Aquisição</h1><p class="muted">${state.candidates.length} candidato(s) · comparação ${compared.length}/3</p></div><button class="btn primary small" data-action="new-candidate">NOVO</button></div>
+        <div class="button-row no-print"><button class="btn" data-action="open-finance">FINANÇAS</button><button class="btn" data-action="compare">COMPARAR (${compared.length})</button><button class="btn" data-action="open-insurance">SEGUROS</button><button class="btn" data-action="open-tools">FERRAMENTAS</button></div>
+        <section class="section">${sorted.length ? `<div class="list">${sorted.map(renderCandidateCard).join("")}</div>` : emptyState("Nenhum candidato cadastrado.", "Cole o texto de um anúncio; o sistema tentará extrair os dados localmente.", `<button class="btn primary" data-action="new-candidate">CADASTRAR PRIMEIRO ANÚNCIO</button>`)}</section>
+        <section class="section card"><h2>Fluxo de decisão</h2><div class="chips"><span class="chip">ANÚNCIO</span><span>→</span><span class="chip">TRIAGEM</span><span>→</span><span class="chip">VISITA</span><span>→</span><span class="chip">INSPEÇÃO</span><span>→</span><span class="chip">COMPARAÇÃO</span><span>→</span><span class="chip">OFERTA</span><span>→</span><span class="chip">COMPRA</span></div></section>`;
+    }
+
+    function renderCandidateCard(candidate) {
+      const cost = calculateAcquisitionCost(candidate);
+      const reliability = calculateAdReliability(candidate);
+      const inspection = calculateInspection(candidate.id);
+      const docs = documentStatus(candidate);
+      const rec = recommendation(candidate);
+      const image = candidate.images?.[0]?.data;
+      return `<article class="card ${docs === "IRREGULAR" ? "critical" : ""}">
+        ${image ? `<img src="${image}" alt="Imagem do anúncio" style="width:100%;height:150px;object-fit:cover;border-radius:9px;margin-bottom:10px">` : ""}
+        <div class="list-item-head"><div><h2>${escapeHtml(candidateName(candidate))}</h2><small>${escapeHtml(candidate.source || "Fonte não informada")} · ${escapeHtml(candidate.city || "Local não informado")}</small></div>${badge(rec,statusColor(rec))}</div>
+        <div class="grid two section"><div class="metric"><span class="label">Preço pedido</span><span class="value">${money(candidate.askingPrice)}</span></div><div class="metric"><span class="label">Custo total estimado</span><span class="value">${money(cost.total)}</span></div></div>
+        <div class="chips"><span class="chip">Documento: ${docs}</span><span class="chip">Anúncio: ${reliability.score}/100</span><span class="chip">Técnica: ${inspection.verified ? number(inspection.score,1) : "A avaliar"}</span><span class="chip">Risco: ${money(cost.risk)}</span></div>
+        <div class="checkline section"><input type="checkbox" class="compare-check" data-id="${candidate.id}" id="compare-${candidate.id}" ${candidate.compare ? "checked" : ""}><label for="compare-${candidate.id}">Selecionar para comparação (máx. 3)</label></div>
+        <div class="list-actions"><button class="btn small primary" data-action="candidate-detail" data-id="${candidate.id}">ABRIR</button><button class="btn small" data-action="inspection" data-id="${candidate.id}">INSPEÇÃO</button><button class="btn small" data-action="offers" data-id="${candidate.id}">OFERTAS</button><button class="btn small danger" data-action="delete-candidate" data-id="${candidate.id}">EXCLUIR</button></div>
+      </article>`;
+    }
+
+    // ===========================
+    // NAVIGATION
+    // ===========================
+    function navigate(route) {
+      currentRoute = route;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelector(".bottom-nav").addEventListener("click", event => {
+      const button = event.target.closest("[data-route]");
+      if (button) navigate(button.dataset.route);
+    });
+
+    document.addEventListener("click", event => {
+      const routeTarget = event.target.closest("[data-route-target]");
+      if (routeTarget) navigate(routeTarget.dataset.routeTarget);
+      const actionTarget = event.target.closest("[data-action]");
+      if (actionTarget) handleAction(actionTarget.dataset.action, actionTarget.dataset.id, actionTarget);
+    });
+
+    document.addEventListener("change", event => {
+      if (event.target.classList.contains("compare-check")) toggleCompare(event.target.dataset.id, event.target.checked);
+    });
+
+    function handleAction(action, id, target) {
+      const actions = {
+        "new-candidate": () => openCandidateForm(),
+        "candidate-detail": () => openCandidateDetail(id),
+        "delete-candidate": () => deleteCandidate(id),
+        "inspection": () => openInspection(id),
+        "offers": () => openOffers(id),
+        "compare": openComparison,
+        "open-finance": openFinance,
+        "open-insurance": openInsurance,
+        "open-tools": openTools,
+        "open-alerts": openAlerts,
+        "new-repair": () => openRepairForm(),
+        "edit-repair": () => openRepairForm(id),
+        "complete-repair": () => openCompleteRepair(id),
+        "recur-repair": () => registerRecurrence(id),
+        "delete-repair": () => deleteRepair(id),
+        "new-record": () => openRecordForm(),
+        "record-detail": () => openRecordDetail(id),
+        "delete-record": () => deleteRecord(id),
+        "new-part": () => openPartForm(),
+        "edit-part": () => openPartForm(id),
+        "part-detail": () => openPartDetail(id),
+        "delete-part": () => deletePart(id),
+        "open-costs": openCosts,
+        "open-reports": openReports,
+        "close-modal": closeModal
+      };
+      if (actions[action]) actions[action]();
+    }
+
+    // ===========================
+    // MODALS
+    // ===========================
+    function openModal(title, body, footer = "", options = {}) {
+      const root = byId("modalRoot");
+      root.innerHTML = `<div class="modal-backdrop no-print" id="modalBackdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><header class="modal-head"><h2 id="modalTitle">${escapeHtml(title)}</h2><button class="icon-btn" data-action="close-modal" aria-label="Fechar">×</button></header><div class="modal-body">${body}</div>${footer ? `<footer class="modal-foot">${footer}</footer>` : ""}</section></div>`;
+      if (options.wide) root.querySelector(".modal").style.width = "min(100%, 980px)";
+      root.querySelector(".modal")?.focus();
+    }
+
+    function closeModal() { byId("modalRoot").innerHTML = ""; }
+
+    function openAlerts() {
+      const body = state.alerts.length ? `<div class="list">${state.alerts.map(alert => `<article class="list-item alert-item" data-level="${alert.level}"><div class="list-item-head"><div><strong>${escapeHtml(alert.title)}</strong><br><small>${escapeHtml(alert.text)}</small></div>${badge(alert.level,statusColor(alert.level))}</div>${alert.due ? `<small>Vencimento: ${dateLabel(alert.due)}</small>` : ""}</article>`).join("")}</div>` : emptyState("Sem alertas ativos.", "Os alertas são gerados a partir dos dados locais.");
+      openModal("Central de alertas", body, `<button class="btn" data-action="close-modal">FECHAR</button>`);
+    }
+
+    // ===========================
+    // ACQUISITION
+    // ===========================
+    function candidateDefaults(candidate = {}) {
+      return {
+        id: candidate.id || uid(), adText: "", link: "", source: "", yearMake: "", yearModel: "", version: "", motor: "", valves: "", mileage: "", askingPrice: "", negotiatedPrice: "", fipe: "", city: "", distance: "", sellerName: "", sellerPhone: "", declaredDefects: "", inconsistencies: "", notes: "", status: "ANÚNCIO", images: [], historyKnown: false, contradictions: 0, priceOutlier: false, pressurePayment: false, refusesInspection: false, ownerUnknown: false, documentationStatus: "NÃO VERIFICADA", docRegular: false, ownerApt: false, chassisChecked: false, engineChecked: false, transferViable: false, transferImpossible: false, debtsChecked: false, auction: false, accident: false, docProtocol: "", docQueryDate: "", docCheckedToday: false, runs: false, testDrive: "NÃO VERIFICADO", coldEngine: "NÃO VERIFICADO", batteryVoltage: "", obdCodes: "", engineTemperature: "", fuelCorrections: "", visitParameters: "", transportCost: 0, documentCost: 0, debts: 0, transferCost: 0, initialInsurance: 0, manualRiskEnabled: false, manualRiskValue: 0, compare: false, createdAt: new Date().toISOString(), ...candidate
+      };
+    }
+
+    function openCandidateForm(id = null) {
+      const existing = id ? findCandidate(id) : null;
+      const c = candidateDefaults(existing || {});
+      const body = `<form id="candidateForm">
+        <input type="hidden" name="id" value="${c.id}">
+        <details open><summary>1. Anúncio e extração local</summary><div class="details-body">
+          <div class="field"><label>Texto do anúncio</label><textarea name="adText" id="adText" placeholder="Cole aqui o anúncio completo">${escapeHtml(c.adText)}</textarea><div class="help">A extração usa expressões locais; não acessa nem valida o conteúdo do link.</div></div>
+          <button type="button" class="btn block" id="extractAdBtn">EXTRAIR DADOS DO TEXTO</button>
+          <div class="form-grid section"><div class="field"><label>Fonte</label><input name="source" value="${attr(c.source)}" placeholder="OLX, Webmotors, indicação..."></div><div class="field"><label>Link</label><input type="url" name="link" value="${attr(c.link)}" placeholder="https://..."></div></div>
+        </div></details>
+        <details open><summary>2. Veículo</summary><div class="details-body form-grid">
+          <div class="field"><label>Ano fabricação</label><input type="number" min="1990" max="2100" name="yearMake" value="${attr(c.yearMake)}"></div>
+          <div class="field"><label>Ano modelo</label><input type="number" min="1990" max="2100" name="yearModel" value="${attr(c.yearModel)}"></div>
+          <div class="field"><label class="required">Versão / identificação</label><input required name="version" value="${attr(c.version)}" placeholder="GLS, CD ou descrição livre"></div>
+          <div class="field"><label>Motor</label><input name="motor" value="${attr(c.motor)}" placeholder="2.0, 2.2..."></div>
+          <div class="field"><label>Válvulas</label><input name="valves" value="${attr(c.valves)}" placeholder="8 ou 16"></div>
+          <div class="field"><label>Quilometragem</label><input type="number" min="0" name="mileage" value="${attr(c.mileage)}"></div>
+          <div class="field"><label class="required">Preço pedido (R$)</label><input required type="number" min="0" step="0.01" name="askingPrice" value="${attr(c.askingPrice)}"></div>
+          <div class="field"><label>FIPE informada manualmente (R$)</label><input type="number" min="0" step="0.01" name="fipe" value="${attr(c.fipe)}"><div class="help">Não há consulta automática.</div></div>
+          <div class="field"><label>Cidade</label><input name="city" value="${attr(c.city)}"></div>
+          <div class="field"><label>Distância (km)</label><input type="number" min="0" name="distance" value="${attr(c.distance)}"></div>
+        </div></details>
+        <details><summary>3. Vendedor e triagem</summary><div class="details-body form-grid">
+          <div class="field"><label>Nome do vendedor</label><input name="sellerName" value="${attr(c.sellerName)}"></div>
+          <div class="field"><label>Telefone</label><input name="sellerPhone" value="${attr(c.sellerPhone)}"></div>
+          <div class="field wide"><label>Defeitos declarados</label><textarea name="declaredDefects">${escapeHtml(c.declaredDefects)}</textarea></div>
+          <div class="field wide"><label>Inconsistências / observações</label><textarea name="inconsistencies">${escapeHtml(c.inconsistencies)}</textarea></div>
+          ${checkbox("historyKnown","Histórico conhecido",c.historyKnown)}
+          <div class="field"><label>Número de contradições</label><input type="number" min="0" name="contradictions" value="${attr(c.contradictions)}"></div>
+          ${checkbox("priceOutlier","Preço informado como muito fora do padrão",c.priceOutlier)}
+          ${checkbox("pressurePayment","Vendedor pressiona pagamento",c.pressurePayment)}
+          ${checkbox("refusesInspection","Vendedor recusa vistoria",c.refusesInspection)}
+          ${checkbox("ownerUnknown","Proprietário não identificado",c.ownerUnknown)}
+        </div></details>
+        <details><summary>4. Documentação eliminatória</summary><div class="details-body">
+          <div class="field"><label>Status informado</label><select name="documentationStatus">${selectOptions(["NÃO VERIFICADA","EM VERIFICAÇÃO","REGULAR","IRREGULAR"],c.documentationStatus)}</select></div>
+          <div class="grid two">
+            ${checkbox("docRegular","Documentação regular",c.docRegular)}
+            ${checkbox("ownerApt","Proprietário/vendedor legalmente apto",c.ownerApt)}
+            ${checkbox("chassisChecked","Chassi conferido",c.chassisChecked)}
+            ${checkbox("engineChecked","Número do motor conferido",c.engineChecked)}
+            ${checkbox("transferViable","Transferência viável",c.transferViable)}
+            ${checkbox("transferImpossible","Impossibilidade de transferência confirmada",c.transferImpossible)}
+            ${checkbox("debtsChecked","Débitos e restrições consultados",c.debtsChecked)}
+            ${checkbox("auction","Leilão",c.auction)}
+            ${checkbox("accident","Sinistro",c.accident)}
+            ${checkbox("docCheckedToday","Documentação consultada no dia da compra",c.docCheckedToday)}
+          </div>
+          <div class="form-grid section"><div class="field"><label>Protocolo / número da consulta</label><input name="docProtocol" value="${attr(c.docProtocol)}"></div><div class="field"><label>Data da consulta</label><input type="date" name="docQueryDate" value="${attr(c.docQueryDate)}"></div></div>
+        </div></details>
+        <details><summary>5. Visita e condição mínima</summary><div class="details-body form-grid">
+          ${checkbox("runs","O carro liga e funciona",c.runs)}
+          <div class="field"><label>Teste de rodagem</label><select name="testDrive">${selectOptions(["NÃO VERIFICADO","SIM","NÃO AUTORIZADO","NÃO FOI POSSÍVEL"],c.testDrive)}</select></div>
+          <div class="field"><label>Motor na chegada</label><select name="coldEngine">${selectOptions(["NÃO VERIFICADO","FRIO","MORNO","AQUECIDO"],c.coldEngine)}</select></div>
+          <div class="field"><label>Tensão bateria (V)</label><input type="number" min="0" step="0.01" name="batteryVoltage" value="${attr(c.batteryVoltage)}"></div>
+          <div class="field wide"><label>Códigos OBD2</label><input name="obdCodes" value="${attr(c.obdCodes)}"></div>
+          <div class="field"><label>Temperatura</label><input name="engineTemperature" value="${attr(c.engineTemperature)}"></div>
+          <div class="field"><label>Correções de combustível</label><input name="fuelCorrections" value="${attr(c.fuelCorrections)}"></div>
+          <div class="field wide"><label>Outros parâmetros / ferramentas usadas</label><textarea name="visitParameters">${escapeHtml(c.visitParameters)}</textarea></div>
+        </div></details>
+        <details><summary>6. Custos de aquisição</summary><div class="details-body form-grid">
+          ${moneyInput("transportCost","Busca, deslocamento e transporte",c.transportCost)}
+          ${moneyInput("documentCost","Documentação relacionada",c.documentCost)}
+          ${moneyInput("debts","Débitos assumidos",c.debts)}
+          ${moneyInput("transferCost","Transferência",c.transferCost)}
+          ${moneyInput("initialInsurance","Seguro inicial",c.initialInsurance)}
+          ${moneyInput("negotiatedPrice","Preço negociado",c.negotiatedPrice)}
+          <div class="field wide">${checkbox("manualRiskEnabled","Ajustar margem de risco manualmente",c.manualRiskEnabled)}</div>
+          ${moneyInput("manualRiskValue","Margem de risco manual",c.manualRiskValue)}
+        </div></details>
+        <details><summary>7. Imagens comprimidas</summary><div class="details-body">
+          <div class="field"><label>Adicionar imagens (máximo 5)</label><input id="candidateImages" type="file" accept="image/*" multiple><div class="help">Redimensionadas para até 1280 px e salvas em JPEG local.</div></div>
+          <div class="image-grid" id="candidateImagePreview">${renderImageTiles(c.images)}</div>
+        </div></details>
+        <details><summary>8. Observações</summary><div class="details-body"><textarea name="notes" placeholder="Observações livres">${escapeHtml(c.notes)}</textarea></div></details>
+      </form>`;
+      openModal(existing ? `Editar ${candidateName(c)}` : "Novo anúncio", body, `<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveCandidateBtn">SALVAR ANÚNCIO</button>`, {wide:true});
+      let workingImages = [...(c.images || [])];
+      byId("extractAdBtn").addEventListener("click", () => {
+        const extracted = extractAdData(byId("adText").value);
+        const form = byId("candidateForm");
+        if (extracted.price && !form.askingPrice.value) form.askingPrice.value = extracted.price;
+        ["yearMake","yearModel","mileage","motor","valves"].forEach(key => { if (extracted[key] && !form[key].value) form[key].value = extracted[key]; });
+        if (extracted.defects) form.declaredDefects.value = [form.declaredDefects.value, extracted.defects].filter(Boolean).join("\n");
+        if (extracted.inconsistencies) form.inconsistencies.value = [form.inconsistencies.value, extracted.inconsistencies].filter(Boolean).join("\n");
+        toast("Extração local concluída. Revise todos os campos.", "success");
+      });
+      byId("candidateImages").addEventListener("change", async event => {
+        const files = [...event.target.files].slice(0, Math.max(0, 5-workingImages.length));
+        if (!files.length) return;
+        toast("Comprimindo imagens localmente...");
+        for (const file of files) {
+          try { workingImages.push(await compressImage(file)); } catch (_) { toast(`Falha ao processar ${file.name}.`, "error"); }
+        }
+        byId("candidateImagePreview").innerHTML = renderImageTiles(workingImages);
+        bindImageRemoval();
+        toast("Imagens comprimidas.", "success");
+      });
+      function bindImageRemoval() { byId("candidateImagePreview").querySelectorAll("[data-image-id]").forEach(button => button.onclick = () => { workingImages = workingImages.filter(image => image.id !== button.dataset.imageId); byId("candidateImagePreview").innerHTML = renderImageTiles(workingImages); bindImageRemoval(); }); }
+      bindImageRemoval();
+      byId("saveCandidateBtn").addEventListener("click", () => {
+        const form = byId("candidateForm"); if (!validateForm(form)) return;
+        const data = getFormData(form);
+        const numeric = ["yearMake","yearModel","mileage","askingPrice","negotiatedPrice","fipe","distance","contradictions","batteryVoltage","transportCost","documentCost","debts","transferCost","initialInsurance","manualRiskValue"];
+        numeric.forEach(key => data[key] = data[key] === "" ? "" : nonNegative(data[key]));
+        data.images = workingImages; data.createdAt = existing?.createdAt || new Date().toISOString(); data.compare = existing?.compare || false;
+        const index = state.candidates.findIndex(item => item.id === data.id);
+        if (index >= 0) state.candidates[index] = { ...existing, ...data }; else state.candidates.unshift(data);
+        logDecision(existing ? "Candidato atualizado" : "Candidato cadastrado", candidateName(data), "", "Dados informados pelo usuário", money(data.askingPrice));
+        closeModal(); scheduleSave(true); render(); toast("Anúncio salvo.", "success");
+      });
+    }
+
+    function checkbox(name, label, checked) { return `<div class="checkline"><input type="checkbox" name="${name}" id="${name}" ${checked ? "checked" : ""}><label for="${name}">${escapeHtml(label)}</label></div>`; }
+    function moneyInput(name, label, value) { return `<div class="field"><label>${escapeHtml(label)} (R$)</label><input type="number" min="0" step="0.01" name="${name}" value="${attr(value)}"></div>`; }
+    function renderImageTiles(images = []) { return images.map(image => `<div class="image-tile"><img src="${image.data}" alt="${attr(image.name || "Imagem")}"><button type="button" data-image-id="${image.id}" aria-label="Remover imagem">×</button></div>`).join(""); }
+
+    function openCandidateDetail(id) {
+      const c = findCandidate(id); if (!c) return;
+      const cost = calculateAcquisitionCost(c); const risk = calculateRisk(c); const inspection = calculateInspection(id); const reliability = calculateAdReliability(c); const offers = calculateOffers(c);
+      const missingQuestions = [];
+      if (!c.mileage) missingQuestions.push("Qual é a quilometragem atual e há comprovação?");
+      if (!c.sellerName || c.ownerUnknown) missingQuestions.push("Quem é o proprietário legal e quem assinará a transferência?");
+      if (!c.historyKnown) missingQuestions.push("Há histórico de manutenção, notas ou datas dos principais serviços?");
+      if (!c.docRegular) missingQuestions.push("Existem débitos, restrições, divergências de chassi/motor, leilão ou sinistro?");
+      if (c.testDrive !== "SIM") missingQuestions.push("Será permitido ligar com motor frio e realizar teste de rodagem?");
+      if (c.refusesInspection) missingQuestions.push("Por que a vistoria/inspeção foi recusada?");
+      const repairs = candidateRepairs(id);
+      const body = `<div class="grid two">
+        <article class="card"><h3>Resumo</h3><p><strong>${escapeHtml(candidateName(c))}</strong><br>${escapeHtml(c.city || "Local não informado")} · ${c.distance ? `${number(c.distance,0)} km` : "distância não informada"}</p><div class="chips">${badge(recommendation(c),statusColor(recommendation(c)))}${badge(documentStatus(c),statusColor(documentStatus(c)))}<span class="chip">Anúncio ${reliability.score}/100</span></div>${c.link ? `<p><a href="${attr(c.link)}" target="_blank" rel="noopener">Abrir link do anúncio</a></p>` : ""}</article>
+        <article class="card"><h3>Custo total</h3><div class="score">${money(cost.total)}</div><small>Custo econômico ${money(cost.economicTotal)}</small><div class="comparison-value"><strong>Preço</strong>${money(cost.price)}</div><div class="comparison-value"><strong>Reparos imediatos</strong>${money(cost.immediateRepairs)}</div><div class="comparison-value"><strong>Risco</strong>${money(cost.risk)}</div></article>
+      </div>
+      <details open><summary>Confiabilidade e risco</summary><div class="details-body"><p><strong>Margem de risco:</strong> ${money(risk.value)} (${risk.points} pontos)</p><ul>${risk.reasons.map(reason => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>${reliability.alerts.length ? `<p><strong>Sinais do anúncio:</strong></p><ul>${reliability.alerts.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "<p>Nenhum sinal adicional marcado.</p>"}</div></details>
+      <details><summary>Perguntas antes da visita</summary><div class="details-body">${missingQuestions.length ? `<ol>${missingQuestions.map(question => `<li>${escapeHtml(question)}</li>`).join("")}</ol>` : `<p>Os principais campos estão preenchidos. Confirme novamente documentação e condição no dia.</p>`}</div></details>
+      <details><summary>Inspeção técnica</summary><div class="details-body"><p>Nota ponderada: <strong>${inspection.verified ? `${number(inspection.score,2)}/5` : "Não iniciada"}</strong> · ${inspection.verified}/${inspection.total} verificados · ${inspection.unverified} não verificados.</p><button class="btn block" data-action="inspection" data-id="${c.id}">${inspection.verified ? "CONTINUAR INSPEÇÃO" : "INICIAR INSPEÇÃO"}</button></div></details>
+      <details open><summary>Reparos identificados (${repairs.length})</summary><div class="details-body">${repairs.length ? repairs.map(r => `<div class="list-item"><strong>${escapeHtml(r.title)}</strong><br><small>${r.priority} · ${r.timing} · ${money(calculateRepairExpected(r))}</small></div>`).join("") : `<p class="muted">Nenhum reparo associado.</p>`}<button class="btn block section" id="addCandidateRepairBtn">ADICIONAR REPARO</button></div></details>
+      <details><summary>Ofertas calculadas</summary><div class="details-body"><p>Agressiva: <strong>${offers.aggressive === null ? "A pesquisar" : money(offers.aggressive)}</strong><br>Justa: <strong>${offers.fair === null ? "A pesquisar" : money(offers.fair)}</strong><br>Limite máximo: <strong>${offers.maximum === null ? "A pesquisar" : money(offers.maximum)}</strong></p><small>${escapeHtml(offers.basis)}</small></div></details>
+      ${c.images?.length ? `<details><summary>Imagens (${c.images.length})</summary><div class="details-body image-grid">${c.images.map(image=>`<div class="image-tile"><img src="${image.data}" alt="Imagem"></div>`).join("")}</div></details>` : ""}`;
+      const canBuy = documentStatus(c) === "CONFIRMADA" && c.docCheckedToday && c.runs && c.testDrive === "SIM";
+      openModal(candidateName(c), body, `<button class="btn" id="editCandidateBtn">EDITAR</button><button class="btn warning" id="buyCandidateBtn" ${canBuy ? "" : "disabled"}>COMPRAR</button><button class="btn" data-action="close-modal">FECHAR</button>`, {wide:true});
+      byId("editCandidateBtn").onclick = () => openCandidateForm(c.id);
+      byId("addCandidateRepairBtn").onclick = () => openRepairForm(null, c.id);
+      byId("buyCandidateBtn").onclick = () => openPurchase(c.id);
+    }
+
+    function deleteCandidate(id) {
+      const c = findCandidate(id); if (!c || !confirmAction(`Excluir ${candidateName(c)} e sua inspeção? Esta ação não pode ser desfeita.`)) return;
+      state.candidates = state.candidates.filter(item => item.id !== id); state.inspections = state.inspections.filter(item => item.candidateId !== id); state.repairs = state.repairs.filter(item => item.candidateId !== id);
+      logDecision("Candidato excluído", candidateName(c), "Manter histórico", "Exclusão confirmada pelo usuário", money(c.askingPrice)); scheduleSave(true); render(); toast("Candidato excluído.", "success");
+    }
+
+    function toggleCompare(id, checked) {
+      const candidate = findCandidate(id); if (!candidate) return;
+      if (checked && state.candidates.filter(item => item.compare).length >= 3) { candidate.compare = false; render(); toast("Selecione no máximo 3 candidatos.", "error"); return; }
+      candidate.compare = checked; scheduleSave();
+    }
+
+    function openComparison() {
+      const selected = state.candidates.filter(item => item.compare);
+      if (!selected.length) { toast("Selecione até 3 candidatos nos cards."); return; }
+      const body = `<div class="compare-grid">${selected.map(c => { const cost=calculateAcquisitionCost(c), ins=calculateInspection(c.id), rel=calculateAdReliability(c); return `<article class="card"><h3>${escapeHtml(candidateName(c))}</h3>${comparisonRow("Preço",money(c.askingPrice))}${comparisonRow("Transporte",money(c.transportCost))}${comparisonRow("Documentação",money(nonNegative(c.documentCost)+nonNegative(c.debts)+nonNegative(c.transferCost)))}${comparisonRow("Reparos imediatos",money(cost.immediateRepairs))}${comparisonRow("Risco",money(cost.risk))}${comparisonRow("Custo total",money(cost.total))}${comparisonRow("Nota técnica",ins.verified?`${number(ins.score,2)}/5`:"Não avaliada")}${comparisonRow("Quilometragem",c.mileage?`${number(c.mileage,0)} km`:"Não informada")}${comparisonRow("Versão/motor",`${c.version||"—"} ${c.motor||""}`)}${comparisonRow("Anúncio",`${rel.score}/100`)}${comparisonRow("Documentação",documentStatus(c))}${comparisonRow("Recomendação",recommendation(c))}</article>`; }).join("")}</div>`;
+      openModal(`Comparação de ${selected.length} candidato(s)`, body, `<button class="btn" onclick="window.print()">IMPRIMIR / PDF</button><button class="btn" data-action="close-modal">FECHAR</button>`, {wide:true});
+    }
+    function comparisonRow(label,value) { return `<div class="comparison-value"><strong>${escapeHtml(label)}</strong>${escapeHtml(value)}</div>`; }
+
+    function openOffers(id) {
+      const c=findCandidate(id); if(!c)return; const offers=calculateOffers(c);
+      openModal(`Ofertas — ${candidateName(c)}`, `<div class="grid three"><div class="card metric"><span class="label">Oferta agressiva</span><span class="value">${offers.aggressive===null?"A pesquisar":money(offers.aggressive)}</span></div><div class="card metric"><span class="label">Oferta justa</span><span class="value">${offers.fair===null?"A pesquisar":money(offers.fair)}</span></div><div class="card metric"><span class="label">Limite máximo</span><span class="value">${offers.maximum===null?"A pesquisar":money(offers.maximum)}</span></div></div><p class="section">${escapeHtml(offers.basis)}</p><p class="muted">FIPE é somente o valor digitado pelo usuário. Sem dados suficientes, o sistema não inventa referências.</p>`, `<button class="btn" data-action="close-modal">FECHAR</button>`);
+    }
+
+    // ===========================
+    // INSPECTION
+    // ===========================
+    function ensureInspection(candidateId) {
+      let inspection = state.inspections.find(item => item.candidateId === candidateId);
+      if (!inspection) { inspection = { id: uid(), candidateId, mode: "STEP", current: 0, paused: false, pauseReason: "", items: {}, updatedAt: new Date().toISOString() }; state.inspections.push(inspection); }
+      return inspection;
+    }
+
+    function flatInspectionItems() { return INSPECTION_DEFINITION.flatMap(category => category.items.map((label,index) => ({ key:`${category.id}-${index}`, category:category.label, label }))); }
+
+    function openInspection(candidateId) {
+      const candidate=findCandidate(candidateId); if(!candidate)return; const inspection=ensureInspection(candidateId); renderInspectionModal(candidate,inspection);
+    }
+
+    function renderInspectionModal(candidate, inspection) {
+      const flat=flatInspectionItems(); inspection.current=clamp(inspection.current||0,0,flat.length-1); const calc=calculateInspection(candidate.id); const step=flat[inspection.current];
+      const header=`<div class="card"><div class="list-item-head"><div><strong>${calc.verified}/${calc.total} verificados</strong><br><small>${calc.unverified} não verificados · nota ${calc.verified?number(calc.score,2):"—"}</small></div>${badge(inspection.mode==="STEP"?"PASSO A PASSO":"LISTA","blue")}</div><div class="progress section"><span style="width:${calc.total?calc.verified/calc.total*100:0}%"></span></div></div><div class="button-row section"><button class="btn small" id="stepModeBtn">PASSO A PASSO</button><button class="btn small" id="listModeBtn">LISTA</button><button class="btn small warning" id="pauseInspectionBtn">PAUSAR</button></div>`;
+      let content="";
+      if(inspection.mode==="STEP") content=`<div class="section"><div class="eyebrow">${inspection.current+1} de ${flat.length} · ${escapeHtml(step.category)}</div>${renderInspectionInput(step,inspection.items[step.key])}<div class="button-row"><button class="btn" id="previousInspectionBtn" ${inspection.current===0?"disabled":""}>ANTERIOR</button><button class="btn primary" id="nextInspectionBtn">${inspection.current===flat.length-1?"CONCLUIR":"PRÓXIMO"}</button></div></div>`;
+      else content=`<div class="section">${INSPECTION_DEFINITION.map(category=>`<details open><summary>${category.label}</summary><div class="details-body">${category.items.map((label,index)=>renderInspectionInput({key:`${category.id}-${index}`,category:category.label,label},inspection.items[`${category.id}-${index}`],true)).join("")}</div></details>`).join("")}</div>`;
+      openModal(`Inspeção — ${candidateName(candidate)}`, header+content, `<button class="btn" data-action="close-modal">FECHAR E CONTINUAR DEPOIS</button>`, {wide:true});
+      byId("stepModeBtn").onclick=()=>{inspection.mode="STEP";scheduleSave();renderInspectionModal(candidate,inspection);};
+      byId("listModeBtn").onclick=()=>{inspection.mode="LIST";scheduleSave();renderInspectionModal(candidate,inspection);};
+      byId("pauseInspectionBtn").onclick=()=>openPauseInspection(candidate,inspection);
+      document.querySelectorAll(".inspection-item").forEach(container=>bindInspectionItem(container,inspection,candidate));
+      if(byId("previousInspectionBtn")) byId("previousInspectionBtn").onclick=()=>{inspection.current=Math.max(0,inspection.current-1);scheduleSave();renderInspectionModal(candidate,inspection);};
+      if(byId("nextInspectionBtn")) byId("nextInspectionBtn").onclick=()=>{if(inspection.current<flat.length-1)inspection.current++;else toast("Inspeção concluída com os itens verificados. Não verificados permanecem como risco.","success");scheduleSave(true);renderInspectionModal(candidate,inspection);};
+    }
+
+    function renderInspectionInput(definition,item={},compact=false) {
+      const value=item||{}; return `<div class="inspection-item ${value.verified?"":"unverified"}" data-key="${definition.key}"><div class="list-item-head"><div><strong>${escapeHtml(definition.label)}</strong><br><small>${escapeHtml(definition.category)}</small></div><span class="badge ${value.verified?"green":"yellow"}">${value.verified?`NOTA ${value.score}`:"NÃO VERIFICADO"}</span></div><div class="score-buttons">${[0,1,2,3,4,5].map(score=>`<button type="button" data-score="${score}" class="${value.verified&&safeNumber(value.score)===score?"selected":""}">${score}</button>`).join("")}</div><div class="field"><label>Observação</label><textarea class="inspection-note" rows="${compact?2:3}" placeholder="Evidências, ruídos, vazamentos, testes...">${escapeHtml(value.note||"")}</textarea></div><div class="checkline"><input type="checkbox" class="inspection-unverified" ${value.verified?"":"checked"}><label>Não verificado</label></div></div>`;
+    }
+
+    function bindInspectionItem(container,inspection,candidate) {
+      const key=container.dataset.key; const ensure=()=>inspection.items[key]||(inspection.items[key]={verified:false,score:null,note:""});
+      container.querySelectorAll("[data-score]").forEach(button=>button.onclick=()=>{const item=ensure();item.verified=true;item.score=safeNumber(button.dataset.score);inspection.updatedAt=new Date().toISOString();scheduleSave();renderInspectionModal(candidate,inspection);});
+      container.querySelector(".inspection-unverified").onchange=event=>{const item=ensure();item.verified=!event.target.checked;if(!item.verified)item.score=null;inspection.updatedAt=new Date().toISOString();scheduleSave();renderInspectionModal(candidate,inspection);};
+      container.querySelector(".inspection-note").oninput=event=>{const item=ensure();item.note=event.target.value;inspection.updatedAt=new Date().toISOString();scheduleSave();};
+    }
+
+    function openPauseInspection(candidate,inspection) {
+      const body=`<form id="pauseForm"><div class="field"><label>Motivo da pausa</label><select name="reason">${selectOptions(["Falta de tempo","Teste não autorizado","Item inacessível","Outro"],inspection.pauseReason)}</select></div><div class="field"><label>Observação</label><textarea name="note">${escapeHtml(inspection.pauseNote||"")}</textarea></div></form>`;
+      openModal("Pausar inspeção",body,`<button class="btn" id="backInspectionBtn">VOLTAR</button><button class="btn warning" id="confirmPauseBtn">PAUSAR</button>`);
+      byId("backInspectionBtn").onclick=()=>renderInspectionModal(candidate,inspection);
+      byId("confirmPauseBtn").onclick=()=>{const data=getFormData(byId("pauseForm"));inspection.paused=true;inspection.pauseReason=data.reason;inspection.pauseNote=data.note;scheduleSave();closeModal();toast("Inspeção pausada. Ao retomar, voltará ao último item.","success");};
+    }
+
+    // ===========================
+    // FINANCE
+    // ===========================
+    function openFinance() {
+      const projection=projectReserve(); const sim=state.finance.loanSimulation?amortizationComparison(state.finance.loanSimulation):null;
+      const body=`<form id="financeSettingsForm" class="card"><h3>Disponibilidade atual</h3><div class="form-grid">${moneyInput("currentReserve","Reserva disponível hoje",state.finance.currentReserve)}${moneyInput("maxInstallment","Parcela máxima desejada",state.settings.maxInstallment)}</div><button type="button" class="btn block" id="saveFinanceSettingsBtn">SALVAR VALORES</button></form>
+      <section class="section"><div class="section-head"><h3>Aportes</h3><button class="btn small primary" id="newContributionBtn">NOVO APORTE</button></div>${state.contributions.length?`<div class="list">${state.contributions.sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(item=>`<div class="list-item"><div class="list-item-head"><div><strong>${escapeHtml(item.description||item.status)}</strong><br><small>${dateLabel(item.date)} · ${item.status}</small></div><span>${item.min===item.max?money(item.min):`${money(item.min)}–${money(item.max)}`}</span></div><div class="list-actions"><button class="btn small" data-contribution-edit="${item.id}">EDITAR</button><button class="btn small danger" data-contribution-delete="${item.id}">EXCLUIR</button></div></div>`).join("")}</div>`:emptyState("Nenhum aporte.","Cadastre aportes garantidos ou prováveis.")}</section>
+      <details open><summary>Projeção de 12 meses</summary><div class="details-body table-wrap"><table><thead><tr><th>Mês</th><th>Conservador</th><th>Otimista</th></tr></thead><tbody>${projection.map(row=>`<tr><td>${monthLabel(row.date)}</td><td>${money(row.conservative)}</td><td>${money(row.optimistic)}</td></tr>`).join("")}</tbody></table></div></details>
+      <details open><summary>Consignado / financiamento</summary><div class="details-body"><form id="loanForm" class="form-grid">
+        ${moneyInput("principal","Valor financiado",state.finance.loanSimulation?.principal||0)}
+        <div class="field"><label>Taxa mensal (%)</label><input type="number" min="0" step="0.001" name="rate" value="${attr(state.finance.loanSimulation?.rate||"")}" placeholder="Informe a taxa real"></div>
+        <div class="field"><label>Número de parcelas</label><input type="number" min="1" name="periods" value="${attr(state.finance.loanSimulation?.periods||"")}"></div>
+        ${moneyInput("fees","Tarifas",state.finance.loanSimulation?.fees||0)}
+        ${moneyInput("insurance","Seguros do crédito",state.finance.loanSimulation?.insurance||0)}
+        ${moneyInput("extraPayment","Aporte para amortização",state.finance.loanSimulation?.extraPayment||0)}
+        <div class="field"><label>Amortizar após parcela</label><input type="number" min="1" name="extraAfter" value="${attr(state.finance.loanSimulation?.extraAfter||1)}"></div>
+        <button type="button" class="btn primary wide" id="simulateLoanBtn">SIMULAR</button>
+      </form>${sim?renderLoanResult(sim):`<p class="muted">Informe taxa e prazo reais. O sistema não sugere taxa.</p>`}</div></details>
+      <div class="grid two"><div class="card metric"><span class="label">Compra máxima à vista</span><span class="value">${money(safePurchaseMaximum())}</span></div><div class="card metric"><span class="label">Compra máxima com crédito</span><span class="value">${sim?money(safePurchaseMaximum()+sim.base.principal):"A calcular"}</span></div></div>`;
+      openModal("Finanças para aquisição",body,`<button class="btn" data-action="close-modal">FECHAR</button>`,{wide:true});
+      byId("saveFinanceSettingsBtn").onclick=()=>{const data=getFormData(byId("financeSettingsForm"));state.finance.currentReserve=nonNegative(data.currentReserve);state.settings.maxInstallment=nonNegative(data.maxInstallment);scheduleSave();openFinance();toast("Valores financeiros salvos.","success");};
+      byId("newContributionBtn").onclick=()=>openContributionForm();
+      document.querySelectorAll("[data-contribution-edit]").forEach(btn=>btn.onclick=()=>openContributionForm(btn.dataset.contributionEdit));
+      document.querySelectorAll("[data-contribution-delete]").forEach(btn=>btn.onclick=()=>{if(!confirmAction("Excluir este aporte?"))return;state.contributions=state.contributions.filter(x=>x.id!==btn.dataset.contributionDelete);scheduleSave();openFinance();});
+      byId("simulateLoanBtn").onclick=()=>{const form=byId("loanForm");if(!validateForm(form))return;const data=getFormData(form);["principal","rate","periods","fees","insurance","extraPayment","extraAfter"].forEach(k=>data[k]=nonNegative(data[k]));state.finance.loanSimulation=data;const result=amortizationComparison(data);if(result.base.installment>nonNegative(state.settings.maxInstallment)){const justification=prompt(`A parcela de ${money(result.base.installment)} supera o limite de ${money(state.settings.maxInstallment)}. Se desejar manter a simulação, registre uma justificativa:`);if(justification){logDecision("Alerta de parcela ignorado","Simulação de consignado","Reduzir valor ou aumentar prazo",justification,`Parcela ${money(result.base.installment)}`);state.finance.ignoredAlerts.push({id:uid(),date:new Date().toISOString(),type:"PARCELA",justification,values:result.base});}}scheduleSave(true);openFinance();};
+    }
+
+    function renderLoanResult(sim) {
+      const best=sim.savingTerm>=sim.savingPayment?"REDUZIR PRAZO":"REDUZIR PARCELA";
+      return `<div class="section"><div class="grid three"><div class="card"><strong>Até o final</strong><br>Parcela ${money(sim.base.installment)}<br>Total ${money(sim.base.total)}<br>Juros ${money(sim.base.interest)}</div><div class="card"><strong>Reduzir prazo</strong><br>${sim.reduceTerm.periods} parcelas no total<br>Total ${money(sim.reduceTerm.total)}<br>Economia ${money(sim.savingTerm)}</div><div class="card"><strong>Reduzir parcela</strong><br>Nova parcela ${money(sim.reducePayment.installment)}<br>Total ${money(sim.reducePayment.total)}<br>Economia ${money(sim.savingPayment)}</div></div><p>${badge(`MAIOR ECONOMIA: ${best}`,"green")}</p>${sim.base.installment>nonNegative(state.settings.maxInstallment)?`<p class="danger-text"><strong>ALERTA:</strong> parcela acima do limite configurado de ${money(state.settings.maxInstallment)}.</p>`:""}</div>`;
+    }
+
+    function openContributionForm(id=null) {
+      const item=state.contributions.find(x=>x.id===id)||{id:uid(),date:localDateISO(),status:"PROVÁVEL",min:0,max:0,description:""};
+      openModal(id?"Editar aporte":"Novo aporte",`<form id="contributionForm"><input type="hidden" name="id" value="${item.id}"><div class="field"><label class="required">Descrição</label><input required name="description" value="${attr(item.description)}"></div><div class="form-grid"><div class="field"><label class="required">Data</label><input required type="date" name="date" value="${attr(item.date)}"></div><div class="field"><label>Status</label><select name="status">${selectOptions(["DISPONÍVEL","GARANTIDO","PROVÁVEL"],item.status)}</select></div>${moneyInput("min","Valor mínimo",item.min)}${moneyInput("max","Valor máximo",item.max)}</div></form>`,`<button class="btn" id="backFinanceBtn">CANCELAR</button><button class="btn primary" id="saveContributionBtn">SALVAR</button>`);
+      byId("backFinanceBtn").onclick=openFinance;byId("saveContributionBtn").onclick=()=>{const form=byId("contributionForm");if(!validateForm(form))return;const data=getFormData(form);data.min=nonNegative(data.min);data.max=Math.max(data.min,nonNegative(data.max));const index=state.contributions.findIndex(x=>x.id===data.id);if(index>=0)state.contributions[index]=data;else state.contributions.push(data);scheduleSave();openFinance();};
+    }
+
+    function openInsurance() {
+      const list=state.insuranceQuotes;
+      const body=`<div class="list">${list.length?list.map(q=>`<div class="list-item"><div class="list-item-head"><div><strong>${escapeHtml(q.company||"Empresa não informada")}</strong><br><small>${escapeHtml(q.type)} · ${escapeHtml(q.coverage||"Cobertura não informada")}</small></div><strong>${money(q.annualPrice)}/ano</strong></div><small>Equivalente mensal ${money(nonNegative(q.annualPrice)/12)} · Franquia ${optionalMoney(q.deductible)}</small><div class="list-actions"><button class="btn small danger" data-quote-delete="${q.id}">EXCLUIR</button></div></div>`).join(""):emptyState("Nenhuma cotação.","Registre somente valores reais informados.")}</div><form id="insuranceForm" class="card section"><h3>Nova cotação</h3><div class="form-grid"><div class="field"><label>Tipo</label><select name="type">${selectOptions(["Seguro completo","Roubo/furto/terceiros","Terceiros","Proteção veicular"],"")}</select></div><div class="field"><label>Empresa</label><input name="company"></div><div class="field wide"><label>Cobertura</label><input name="coverage"></div>${moneyInput("annualPrice","Preço anual",0)}${moneyInput("deductible","Franquia",0)}<div class="field wide"><label>Observações</label><textarea name="notes"></textarea></div>${checkbox("purchased","Cotação contratada",false)}</div><button type="button" class="btn primary block" id="saveInsuranceBtn">SALVAR COTAÇÃO</button></form>`;
+      openModal("Cotações de seguro",body,`<button class="btn" data-action="close-modal">FECHAR</button>`,{wide:true});
+      byId("saveInsuranceBtn").onclick=()=>{const data=getFormData(byId("insuranceForm"));data.id=uid();data.annualPrice=nonNegative(data.annualPrice);data.deductible=nonNegative(data.deductible);state.insuranceQuotes.unshift(data);scheduleSave();openInsurance();};
+      document.querySelectorAll("[data-quote-delete]").forEach(btn=>btn.onclick=()=>{if(confirmAction("Excluir cotação?")){state.insuranceQuotes=state.insuranceQuotes.filter(x=>x.id!==btn.dataset.quoteDelete);scheduleSave();openInsurance();}});
+    }
+
+    function openTools() {
+      const body=`${state.tools.length?`<div class="list">${state.tools.map(t=>`<div class="list-item"><div class="list-item-head"><div><strong>${escapeHtml(t.name)}</strong><br><small>${escapeHtml(t.state||"Estado não informado")} · ${escapeHtml(t.location||"Local não informado")}</small></div><strong>${money(t.price)}</strong></div><small>Economia estimada gerada: ${money(t.savings)}</small><div class="list-actions"><button class="btn small danger" data-tool-delete="${t.id}">EXCLUIR</button></div></div>`).join("")}</div>`:emptyState("Nenhuma ferramenta.","Cadastre ferramentas adquiridas para o projeto.")}<form id="toolForm" class="card section"><h3>Nova ferramenta</h3><div class="form-grid"><div class="field"><label class="required">Nome</label><input required name="name"></div>${moneyInput("price","Preço",0)}<div class="field"><label>Estado</label><input name="state" placeholder="Nova, usada..."></div><div class="field"><label>Localização</label><input name="location"></div>${moneyInput("savings","Economia estimada gerada",0)}<div class="field"><label>Reparos em que foi usada</label><input name="repairsUsed"></div>${checkbox("vectraSpecific","Específica do Vectra",false)}</div><button type="button" class="btn primary block" id="saveToolBtn">SALVAR FERRAMENTA</button></form>`;
+      openModal("Ferramentas",body,`<button class="btn" data-action="close-modal">FECHAR</button>`,{wide:true});
+      byId("saveToolBtn").onclick=()=>{const form=byId("toolForm");if(!validateForm(form))return;const data=getFormData(form);data.id=uid();data.price=nonNegative(data.price);data.savings=nonNegative(data.savings);state.tools.unshift(data);scheduleSave();openTools();};
+      document.querySelectorAll("[data-tool-delete]").forEach(btn=>btn.onclick=()=>{if(confirmAction("Excluir ferramenta?")){state.tools=state.tools.filter(x=>x.id!==btn.dataset.toolDelete);scheduleSave();openTools();}});
+    }
+
+    function openPurchase(candidateId) {
+      const c=findCandidate(candidateId);if(!c||!ensurePurchaseEligible(c))return;const cost=calculateAcquisitionCost(c);
+      const body=`<div class="card attention"><strong>Verificação eliminatória concluída</strong><p>Confirme novamente os dados da transação. A compra converterá o candidato em cadastro oficial e mudará a fase para REFORMA.</p></div><form id="purchaseForm" class="section"><div class="form-grid">${moneyInput("finalPrice","Valor final",c.negotiatedPrice||c.askingPrice)}<div class="field"><label class="required">Forma de pagamento</label><input required name="paymentMethod"></div><div class="field"><label class="required">Quem recebeu</label><input required name="recipient"></div><div class="field"><label>Comprovante / referência</label><input name="proof"></div><div class="field"><label>Recibo / contrato</label><input name="contract"></div><div class="field"><label>Transferência planejada</label><input type="date" name="transferPlanned"></div><div class="field"><label>Data da compra</label><input type="date" name="purchaseDate" value="${localDateISO()}"></div><div class="field"><label>Quilometragem na compra</label><input type="number" min="0" name="purchaseKm" value="${attr(c.mileage)}"></div><div class="field wide"><label>Motivos da compra / condições negociadas</label><textarea name="reason"></textarea></div></div><div class="grid two"><div class="card metric"><span class="label">Custo de aquisição estimado</span><span class="value">${money(cost.total)}</span></div><div class="card metric"><span class="label">Reserva restante estimada</span><span class="value">${money(nonNegative(state.finance.currentReserve)-nonNegative(c.negotiatedPrice||c.askingPrice))}</span></div></div></form>`;
+      openModal(`Confirmar compra — ${candidateName(c)}`,body,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn success" id="confirmPurchaseBtn">CONFIRMAR COMPRA</button>`,{wide:true});
+      byId("confirmPurchaseBtn").onclick=()=>{const form=byId("purchaseForm");if(!validateForm(form)||!confirmAction("Confirmar a compra e iniciar a fase REFORMA?"))return;const data=getFormData(form);data.finalPrice=nonNegative(data.finalPrice);data.purchaseKm=nonNegative(data.purchaseKm);const finalCost=calculateAcquisitionCost(c,data.finalPrice);state.vehicle={...c,...data,candidateId:c.id,id:uid(),currentKm:data.purchaseKm,acquisitionTotal:finalCost.total,purchaseSnapshot:JSON.parse(JSON.stringify(c)),purchasedAt:new Date().toISOString()};state.settings.phase="REFORMA";state.finance.currentReserve=Math.max(0,nonNegative(state.finance.currentReserve)-data.finalPrice);state.repairs.forEach(r=>{if(r.candidateId===c.id){delete r.candidateId;r.vehicleId=state.vehicle.id;}});state.documents.push({id:uid(),type:"Transferência",status:"PENDENTE",dueDate:data.transferPlanned,notes:"Acompanhar ATPV-e/recibo, vistoria, taxas e conclusão."});logDecision("Compra confirmada",candidateName(c),"Não comprar",data.reason,`Valor final ${money(data.finalPrice)}; custo total ${money(finalCost.total)}`);state.meta.importantChange=true;scheduleSave(true);closeModal();navigate("home");toast("Compra registrada. Fase REFORMA iniciada.","success");};
+    }
+
+    // ===========================
+    // REPAIRS
+    // ===========================
+    function renderRepairs() {
+      if(!state.vehicle&&!state.repairs.some(r=>r.candidateId))return `<div class="page-title"><div><div class="eyebrow">Fase posterior</div><h1>Reforma</h1></div></div>${emptyState("Nenhum Vectra adquirido.","Este módulo será ativado após a compra. Reparos de candidatos são gerenciados dentro de cada candidato.")}`;
+      const list=state.repairs.filter(r=>!r.candidateId).sort((a,b)=>(PRIORITY_ORDER[a.priority]||9)-(PRIORITY_ORDER[b.priority]||9));const progress=calculateRepairProgress();const next=recommendedRepair();
+      return `<div class="page-title"><div><div class="eyebrow">Segurança → confiabilidade → conforto → estética</div><h1>Reforma</h1><p class="muted">${list.filter(r=>r.status!=="RESOLVIDO").length} pendente(s)</p></div><button class="btn primary small" data-action="new-repair">NOVO</button></div>${next?`<article class="card accent"><div class="eyebrow">Recomendação atual</div><h2>${escapeHtml(next.title)}</h2><p>${next.priority} · criticidade ${nonNegative(next.severity)}/5 · necessário ${money(calculateRepairExpected(next))} · disponível ${money(state.finance.currentReserve)}</p><button class="btn primary block" data-action="edit-repair" data-id="${next.id}">ABRIR REPARO</button></article>`:""}<section class="section grid two">${Object.entries(progress).map(([k,v])=>`<div class="card"><div class="list-item-head"><strong>${k}</strong><span>${number(v.percent,0)}%</span></div><div class="progress"><span style="width:${v.percent}%"></span></div><small>${v.complete}/${v.total} · restante ${money(v.remaining)}</small></div>`).join("")}</section><section class="section"><div class="list">${list.length?list.map(renderRepairCard).join(""):emptyState("Nenhum reparo cadastrado.","Cadastre problemas, custos, testes e prioridades.",`<button class="btn primary" data-action="new-repair">NOVO REPARO</button>`)}</div></section>`;
+    }
+
+    function renderRepairCard(r) { return `<article class="card ${r.priority==="SEGURANÇA"?"critical":""}"><div class="list-item-head"><div><h3>${escapeHtml(r.title)}</h3><small>${escapeHtml(r.system||"Sistema não informado")} · ${r.timing||"Prazo não informado"}</small></div>${badge(r.status||"PLANEJADO",statusColor(r.status))}</div><div class="chips"><span class="chip">${r.priority}</span><span class="chip">Previsto ${money(calculateRepairExpected(r))}</span><span class="chip">Econômico ${money(calculateRepairEconomic(r))}</span><span class="chip">Economia mão de obra ${money(nonNegative(r.ownHours) * nonNegative(state.settings.ownHourValue))}</span><span class="chip">Criticidade ${nonNegative(r.severity)}/5</span></div><div class="list-actions"><button class="btn small" data-action="edit-repair" data-id="${r.id}">EDITAR</button><button class="btn small success" data-action="complete-repair" data-id="${r.id}">CONCLUIR</button>${r.status==="RESOLVIDO"?`<button class="btn small warning" data-action="recur-repair" data-id="${r.id}">REINCIDIU</button>`:""}<button class="btn small danger" data-action="delete-repair" data-id="${r.id}">EXCLUIR</button></div></article>`; }
+
+    function openRepairForm(id=null,candidateId=null) {
+      const existing=id?findRepair(id):null;const r={id:uid(),candidateId:candidateId||"",title:"",system:"",description:"",priority:"CONFIABILIDADE",necessary:true,timing:"CURTO PRAZO",parts:"",materials:"",tools:"",ownHours:0,thirdParty:"",duration:"",estimatedCost:0,partsCost:0,materialsCost:0,toolCost:0,thirdPartyCost:0,actualCost:0,status:"PLANEJADO",severity:3,reincidences:0,...(existing||{})};
+      const body=`<form id="repairForm"><input type="hidden" name="id" value="${r.id}"><input type="hidden" name="candidateId" value="${attr(r.candidateId)}"><div class="form-grid"><div class="field wide"><label class="required">Título</label><input required name="title" value="${attr(r.title)}"></div><div class="field"><label>Sistema</label><input name="system" value="${attr(r.system)}"></div><div class="field"><label>Prioridade</label><select name="priority">${selectOptions(Object.keys(PRIORITY_ORDER),r.priority)}</select></div><div class="field"><label>Prazo</label><select name="timing">${selectOptions(["IMEDIATO","CURTO PRAZO","FUTURO"],r.timing)}</select></div><div class="field"><label>Criticidade 0–5</label><input type="number" min="0" max="5" name="severity" value="${r.severity}"></div><div class="field"><label>Status</label><select name="status">${selectOptions(["PLANEJADO","EM ANDAMENTO","AGUARDANDO PEÇA","RESOLVIDO","PARCIALMENTE RESOLVIDO","NÃO RESOLVIDO"],r.status)}</select></div>${checkbox("necessary","Reparo necessário",r.necessary)}<div class="field wide"><label>Descrição</label><textarea name="description">${escapeHtml(r.description)}</textarea></div><div class="field wide"><label>Peças novas</label><textarea name="parts">${escapeHtml(r.parts)}</textarea><div class="help">Para freios, direção e suspensão, priorize componentes de boa qualidade.</div></div><div class="field"><label>Materiais</label><input name="materials" value="${attr(r.materials)}"></div><div class="field"><label>Ferramentas</label><input name="tools" value="${attr(r.tools)}"></div><div class="field"><label>Serviço terceirizado</label><input name="thirdParty" value="${attr(r.thirdParty)}"></div><div class="field"><label>Duração estimada</label><input name="duration" value="${attr(r.duration)}"></div><div class="field"><label>Horas próprias</label><input type="number" min="0" step="0.1" name="ownHours" value="${r.ownHours}"></div>${moneyInput("estimatedCost","Custo previsto total",r.estimatedCost)}${moneyInput("partsCost","Peças",r.partsCost)}${moneyInput("materialsCost","Materiais",r.materialsCost)}${moneyInput("toolCost","Ferramentas específicas",r.toolCost)}${moneyInput("thirdPartyCost","Terceiros",r.thirdPartyCost)}</div></form>`;
+      openModal(existing?"Editar reparo":"Novo reparo",body,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveRepairBtn">SALVAR</button>`,{wide:true});
+      byId("saveRepairBtn").onclick=()=>{const form=byId("repairForm");if(!validateForm(form))return;const data=getFormData(form);["severity","ownHours","estimatedCost","partsCost","materialsCost","toolCost","thirdPartyCost"].forEach(k=>data[k]=nonNegative(data[k]));data.actualCost=existing?.actualCost||0;data.reincidences=existing?.reincidences||0;const index=state.repairs.findIndex(x=>x.id===data.id);if(index>=0)state.repairs[index]={...existing,...data};else state.repairs.unshift(data);if(existing&&existing.priority!==data.priority)logDecision("Prioridade de reparo alterada",data.title,existing.priority,"Alteração realizada no formulário",data.priority);scheduleSave(true);if(candidateId){closeModal();openCandidateDetail(candidateId);}else{closeModal();navigate("repairs");}toast("Reparo salvo.","success");};
+    }
+
+    function openCompleteRepair(id) {
+      const r=findRepair(id);if(!r)return;
+      openModal(`Concluir — ${r.title}`,`<form id="completeRepairForm"><div class="form-grid">${moneyInput("actualCost","Custo real",r.actualCost)}<div class="field"><label>Horas reais</label><input type="number" min="0" step="0.1" name="actualHours" value="${attr(r.actualHours||"")}"></div><div class="field wide"><label>Peças usadas</label><textarea name="usedParts">${escapeHtml(r.usedParts||"")}</textarea></div><div class="field wide"><label>Serviços executados</label><textarea name="servicesDone">${escapeHtml(r.servicesDone||"")}</textarea></div><div class="field wide"><label>Testes realizados</label><textarea name="tests">${escapeHtml(r.tests||"")}</textarea></div><div class="field"><label>Resultado</label><select name="status">${selectOptions(["RESOLVIDO","PARCIALMENTE RESOLVIDO","NÃO RESOLVIDO"],r.status)}</select></div><div class="field"><label>Validação</label><input name="validation" value="${attr(r.validation||"")}" placeholder="Critério de aceitação"></div><div class="field"><label>Acompanhar até</label><input type="date" name="followUpDate" value="${attr(r.followUpDate||"")}"></div><div class="field"><label>Acompanhar até km</label><input type="number" min="0" name="followUpKm" value="${attr(r.followUpKm||"")}"></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn success" id="saveCompletionBtn">REGISTRAR CONCLUSÃO</button>`);
+      byId("saveCompletionBtn").onclick=()=>{const data=getFormData(byId("completeRepairForm"));r.actualCost=nonNegative(data.actualCost);r.actualHours=nonNegative(data.actualHours);Object.assign(r,data,{completedAt:new Date().toISOString()});state.finance.currentReserve=Math.max(0,nonNegative(state.finance.currentReserve)-r.actualCost);logDecision("Reparo concluído",r.title,"",data.validation,`Custo ${money(r.actualCost)}; status ${r.status}`);scheduleSave(true);closeModal();render();toast("Conclusão registrada.","success");};
+    }
+
+    function registerRecurrence(id) {
+      const r=findRepair(id);if(!r||!confirmAction("Registrar reincidência, reabrir o reparo e iniciar nova análise?"))return;r.status="EM ANDAMENTO";r.reincidences=nonNegative(r.reincidences)+1;r.lastRecurrence=new Date().toISOString();const failure={id:uid(),type:"FALHA",date:localDateISO(),km:state.vehicle?.currentKm||0,title:`Reincidência: ${r.title}`,description:`Falha reincidente vinculada ao reparo ${r.title}.`,systems:r.system,hypotheses:r.description,evidence:r.tests||"",tests:r.validation||"",diagnosis:"",solution:"",status:"ABERTO",repairId:r.id,why1:"",why2:"",why3:"",why4:"",why5:"",causeCategory:"",rootCause:"",correctiveAction:"",preventiveAction:"",validation:""};state.failures.unshift(failure);state.records.unshift({id:uid(),type:"FALHA",date:failure.date,km:failure.km,title:failure.title,description:failure.description,cost:0,failureId:failure.id});state.fmea.unshift({id:uid(),failureId:failure.id,title:failure.title,severity:5,occurrence:Math.min(10,2+r.reincidences),detection:5,action:"Nova análise obrigatória por reincidência"});logDecision("Reincidência registrada",r.title,"Reparo novamente / substituir / adaptar / investigar sistema relacionado","Falha retornou",`Reincidências ${r.reincidences}`);scheduleSave(true);render();toast("Reparo reaberto; falha e FMEA criadas para revisão.","success");
+    }
+    function deleteRepair(id){const r=findRepair(id);if(!r||!confirmAction(`Excluir o reparo “${r.title}”?`))return;state.repairs=state.repairs.filter(x=>x.id!==id);scheduleSave();render();}
+
+    // ===========================
+    // FAILURES / FMEA / FUEL / RECORDS
+    // ===========================
+    function renderRecords() {
+      const records=state.records.filter(item=>currentRecordFilter==="TODOS"||item.type===currentRecordFilter).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+      const fuelMetrics=calculateFuelMetrics();const lastFuel=fuelMetrics.at(-1);
+      return `<div class="page-title"><div><div class="eyebrow">Operação e confiabilidade</div><h1>Registros</h1><p class="muted">Abastecimentos, manutenção, falhas, sintomas, serviços e despesas.</p></div></div><button class="btn primary block" data-action="new-record">＋ NOVO REGISTRO</button>
+      <section class="section grid three"><div class="card metric"><span class="label">Consumo cheio a cheio</span><span class="value">${lastFuel?.consumption?`${number(lastFuel.consumption,2)} km/l`:"A calcular"}</span><span class="sub">Exige dois abastecimentos completos</span></div><div class="card metric"><span class="label">Falhas / sintomas abertos</span><span class="value">${state.failures.filter(x=>x.status!=="ENCERRADO").length}</span></div><div class="card metric"><span class="label">FMEA de alta prioridade</span><span class="value">${state.fmea.filter(x=>calculateFmea(x).band==="ALTO").length}</span></div></section>
+      <section class="section"><div class="chips no-print">${["TODOS","ABASTECIMENTO","MANUTENÇÃO","FALHA","QUASE-FALHA","SINTOMA","SERVIÇO","DESPESA"].map(type=>`<button class="btn small ${currentRecordFilter===type?"primary":""}" data-record-filter="${type}">${type}</button>`).join("")}</div></section>
+      <section class="section"><div class="list">${records.length?records.map(record=>`<article class="list-item"><div class="list-item-head"><div><h3>${escapeHtml(record.title||record.type)}</h3><small>${dateLabel(record.date)} · ${record.km?`${number(record.km,0)} km`:"km não informado"}</small></div>${badge(record.type,record.type==="FALHA"?"red":record.type==="SINTOMA"?"yellow":"blue")}</div><p>${escapeHtml(truncate(record.description||record.notes||"Sem descrição",140))}</p><div class="chips">${record.cost?`<span class="chip">${money(record.cost)}</span>`:""}${record.total?`<span class="chip">${money(record.total)}</span>`:""}</div><div class="list-actions"><button class="btn small" data-action="record-detail" data-id="${record.id}">ABRIR</button><button class="btn small danger" data-action="delete-record" data-id="${record.id}">EXCLUIR</button></div></article>`).join(""):emptyState("Nenhum registro neste filtro.","Use NOVO REGISTRO para começar.")}</div></section>
+      <section class="section"><details><summary>Controles especiais</summary><div class="details-body grid two"><button class="btn" id="oilLogBtn">ÓLEO DO MOTOR</button><button class="btn" id="fluidLogBtn">FLUIDOS</button><button class="btn" id="beltLogBtn">CORREIA DENTADA</button><button class="btn" id="serviceLogBtn">SERVIÇO TERCEIRIZADO</button><button class="btn" id="documentLogBtn">DOCUMENTOS</button><button class="btn" id="patrimonialLogBtn">VALOR PATRIMONIAL</button><button class="btn" id="gnvSimulatorBtn">SIMULADOR GNV</button></div></details></section>`;
+    }
+
+    document.addEventListener("click",event=>{
+      const filter=event.target.closest("[data-record-filter]");if(filter){currentRecordFilter=filter.dataset.recordFilter;render();}
+      if(event.target.id==="oilLogBtn")openSpecialLog("oil");
+      if(event.target.id==="fluidLogBtn")openSpecialLog("fluid");
+      if(event.target.id==="beltLogBtn")openSpecialLog("belt");
+      if(event.target.id==="serviceLogBtn")openServiceForm();
+      if(event.target.id==="documentLogBtn")openDocumentForm();
+      if(event.target.id==="patrimonialLogBtn")openPatrimonialForm();
+      if(event.target.id==="gnvSimulatorBtn")openGnvSimulator();
+    });
+
+    function openRecordForm() {
+      openModal("Novo registro",`<p>Escolha o tipo. Cada fluxo registra somente dados informados por você.</p><div class="grid two">${["ABASTECIMENTO","MANUTENÇÃO","FALHA","QUASE-FALHA","SINTOMA","SERVIÇO","DESPESA"].map(type=>`<button class="btn" data-new-record-type="${type}">${type}</button>`).join("")}</div>`,`<button class="btn" data-action="close-modal">CANCELAR</button>`);
+      document.querySelectorAll("[data-new-record-type]").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.newRecordType;if(type==="ABASTECIMENTO")openFuelForm();else if(["FALHA","QUASE-FALHA","SINTOMA"].includes(type))openFailureForm(null,type);else openGenericRecordForm(type);});
+    }
+
+    function openGenericRecordForm(type,record=null) {
+      const r=record||{id:uid(),type,date:localDateISO(),km:state.vehicle?.currentKm||"",title:"",description:"",cost:0};
+      openModal(`${record?"Editar":"Novo"} ${type.toLowerCase()}`,`<form id="genericRecordForm"><input type="hidden" name="id" value="${r.id}"><div class="form-grid"><div class="field"><label class="required">Data</label><input required type="date" name="date" value="${attr(r.date)}"></div><div class="field"><label>Quilometragem</label><input type="number" min="0" name="km" value="${attr(r.km)}"></div><div class="field wide"><label class="required">Título</label><input required name="title" value="${attr(r.title)}"></div><div class="field wide"><label>Descrição</label><textarea name="description">${escapeHtml(r.description)}</textarea></div>${moneyInput("cost","Custo",r.cost)}</div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveGenericRecordBtn">SALVAR</button>`);
+      byId("saveGenericRecordBtn").onclick=()=>{const form=byId("genericRecordForm");if(!validateForm(form))return;const data=getFormData(form);data.type=type;data.km=nonNegative(data.km);data.cost=nonNegative(data.cost);const index=state.records.findIndex(x=>x.id===data.id);if(index>=0)state.records[index]=data;else state.records.unshift(data);if(state.vehicle&&data.km>nonNegative(state.vehicle.currentKm))state.vehicle.currentKm=data.km;scheduleSave();closeModal();navigate("records");toast("Registro salvo.","success");};
+    }
+
+    function openFuelForm() {
+      openModal("Novo abastecimento",`<form id="fuelForm"><div class="form-grid"><div class="field"><label class="required">Data</label><input required type="date" name="date" value="${localDateISO()}"></div><div class="field"><label class="required">Quilometragem</label><input required type="number" min="0" name="km" value="${attr(state.vehicle?.currentKm||"")}"></div><div class="field"><label>Posto</label><input name="station"></div><div class="field"><label>Combustível</label><input name="fuel" value="${attr(state.settings.defaultFuel)}"></div><div class="field"><label class="required">Litros</label><input required type="number" min="0.01" step="0.001" name="liters"></div><div class="field"><label class="required">Preço/litro</label><input required type="number" min="0" step="0.001" name="pricePerLiter"></div><div class="field"><label>Total informado</label><input type="number" min="0" step="0.01" name="total"></div>${checkbox("fullTank","Tanque cheio",true)}<div class="field"><label>Autonomia indicada (km)</label><input type="number" min="0" name="indicatedRange"></div><div class="field"><label>Capacidade considerada do tanque (l)</label><input type="number" min="0" step="0.1" name="tankCapacity"><div class="help">Informe manualmente conforme o veículo/medição.</div></div><div class="field"><label>Nível indicado</label><input name="indicatedLevel"></div><div class="field"><label>Qualidade percebida</label><select name="quality">${selectOptions(["NORMAL","SUSPEITA","PROBLEMA CONFIRMADO"],"NORMAL")}</select></div><div class="field wide"><label>Observações</label><textarea name="notes"></textarea></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveFuelBtn">SALVAR</button>`);
+      byId("saveFuelBtn").onclick=()=>{const form=byId("fuelForm");if(!validateForm(form))return;const data=getFormData(form);["km","liters","pricePerLiter","total","indicatedRange","tankCapacity"].forEach(k=>data[k]=nonNegative(data[k]));if(!data.total)data.total=data.liters*data.pricePerLiter;data.id=uid();state.fuelLogs.push(data);state.records.unshift({id:uid(),type:"ABASTECIMENTO",date:data.date,km:data.km,title:`Abastecimento — ${data.fuel}`,description:`${number(data.liters,2)} l em ${escapeHtml(data.station||"posto não informado")}`,total:data.total,fuelLogId:data.id});if(state.vehicle&&data.km>nonNegative(state.vehicle.currentKm))state.vehicle.currentKm=data.km;if(data.quality==="SUSPEITA"){const failure={id:uid(),type:"SINTOMA",date:data.date,km:data.km,title:"Combustível com qualidade suspeita",description:`Abastecimento em ${data.station||"posto não informado"}; manter aberto até confirmação.`,status:"ABERTO",fuelLogId:data.id};state.failures.unshift(failure);state.records.unshift({id:uid(),type:"SINTOMA",date:data.date,km:data.km,title:failure.title,description:failure.description,failureId:failure.id});}scheduleSave(true);closeModal();navigate("records");const metric=calculateFuelMetrics().at(-1);if(metric?.difference>nonNegative(state.settings.autonomyAlertPercent))toast(`Alerta: autonomia indicada difere ${number(metric.difference,1)}% da real.`,"error");else toast("Abastecimento salvo.","success");};
+    }
+
+    function openFailureForm(existingId=null,type="SINTOMA") {
+      const existing=existingId?state.failures.find(x=>x.id===existingId):null;const f={id:uid(),type,date:localDateISO(),km:state.vehicle?.currentKm||"",title:"",description:"",sequence:"",conditions:"",rain:"NÃO INFORMADO",ambientTemperature:"",road:"",traffic:"",load:"",systems:"",suspectedParts:"",hypotheses:"",tests:"",evidence:"",results:"",diagnosis:"",solution:"",status:"ABERTO",why1:"",why2:"",why3:"",why4:"",why5:"",causeCategory:"",rootCause:"",correctiveAction:"",preventiveAction:"",validation:"",cost:0,downtime:0,safetyRisk:"",useImpact:"",travelImpact:"",reliabilityImpact:"",prevention:"",...(existing||{})};
+      const body=`<form id="failureForm"><input type="hidden" name="id" value="${f.id}"><input type="hidden" name="type" value="${f.type}"><details open><summary>Ocorrência</summary><div class="details-body form-grid"><div class="field"><label>Data</label><input type="date" name="date" value="${attr(f.date)}"></div><div class="field"><label>Quilometragem</label><input type="number" min="0" name="km" value="${attr(f.km)}"></div><div class="field wide"><label class="required">Título</label><input required name="title" value="${attr(f.title)}"></div><div class="field wide"><label class="required">Descrição</label><textarea required name="description">${escapeHtml(f.description)}</textarea></div><div class="field wide"><label>Sequência dos eventos</label><textarea name="sequence">${escapeHtml(f.sequence)}</textarea></div><div class="field"><label>Condições de uso</label><input name="conditions" value="${attr(f.conditions)}"></div><div class="field"><label>Chuva</label><select name="rain">${selectOptions(["NÃO INFORMADO","NÃO","SIM"],f.rain)}</select></div><div class="field"><label>Temperatura ambiente</label><input name="ambientTemperature" value="${attr(f.ambientTemperature)}"></div><div class="field"><label>Estrada</label><input name="road" value="${attr(f.road)}"></div><div class="field"><label>Trânsito</label><input name="traffic" value="${attr(f.traffic)}"></div><div class="field"><label>Carga</label><input name="load" value="${attr(f.load)}"></div><div class="field"><label>Sistemas envolvidos</label><input name="systems" value="${attr(f.systems)}"></div><div class="field"><label>Peças suspeitas</label><input name="suspectedParts" value="${attr(f.suspectedParts)}"></div></div></details><details open><summary>Hipóteses, testes e evidências</summary><div class="details-body"><div class="field"><label>Hipóteses</label><textarea name="hypotheses">${escapeHtml(f.hypotheses)}</textarea></div><div class="field"><label>Testes</label><textarea name="tests">${escapeHtml(f.tests)}</textarea></div><div class="field"><label>Evidências</label><textarea name="evidence">${escapeHtml(f.evidence)}</textarea></div><div class="field"><label>Resultados</label><textarea name="results">${escapeHtml(f.results)}</textarea></div><div class="field"><label>Diagnóstico final</label><textarea name="diagnosis">${escapeHtml(f.diagnosis)}</textarea></div><div class="field"><label>Solução</label><textarea name="solution">${escapeHtml(f.solution)}</textarea></div></div></details><details><summary>5 Porquês e causa raiz</summary><div class="details-body">${[1,2,3,4,5].map(i=>`<div class="field"><label>Por quê ${i}?</label><textarea name="why${i}">${escapeHtml(f[`why${i}`])}</textarea></div>`).join("")}<div class="field"><label>Categoria de causa</label><select name="causeCategory">${selectOptions(["","PEÇA","MÉTODO","FERRAMENTA","INSTALAÇÃO","USO","AMBIENTE","OUTRO SISTEMA"],f.causeCategory)}</select></div><div class="field"><label>Causa raiz provável</label><textarea name="rootCause">${escapeHtml(f.rootCause)}</textarea></div><div class="field"><label>Ação corretiva</label><textarea name="correctiveAction">${escapeHtml(f.correctiveAction)}</textarea></div><div class="field"><label>Ação preventiva</label><textarea name="preventiveAction">${escapeHtml(f.preventiveAction)}</textarea></div><div class="field"><label>Validação</label><textarea name="validation">${escapeHtml(f.validation)}</textarea></div></div></details><details><summary>Impacto</summary><div class="details-body form-grid">${moneyInput("cost","Custo",f.cost)}<div class="field"><label>Tempo parado (dias)</label><input type="number" min="0" name="downtime" value="${attr(f.downtime)}"></div><div class="field"><label>Risco de segurança</label><input name="safetyRisk" value="${attr(f.safetyRisk)}"></div><div class="field"><label>Impacto no uso</label><input name="useImpact" value="${attr(f.useImpact)}"></div><div class="field"><label>Impacto em viagens</label><input name="travelImpact" value="${attr(f.travelImpact)}"></div><div class="field"><label>Impacto na confiabilidade</label><input name="reliabilityImpact" value="${attr(f.reliabilityImpact)}"></div><div class="field wide"><label>Possibilidade de prevenção</label><input name="prevention" value="${attr(f.prevention)}"></div><div class="field"><label>Status</label><select name="status">${selectOptions(["ABERTO","EM ANÁLISE","ACOMPANHAMENTO","ENCERRADO"],f.status)}</select></div></div></details><details><summary>FMEA associada</summary><div class="details-body form-grid"><div class="field"><label>Gravidade (1–10)</label><input type="number" min="1" max="10" name="fmeaSeverity" value="${attr(existing?.fmeaSeverity||5)}"></div><div class="field"><label>Ocorrência (1–10)</label><input type="number" min="1" max="10" name="fmeaOccurrence" value="${attr(existing?.fmeaOccurrence||5)}"></div><div class="field"><label>Detecção (1–10)</label><input type="number" min="1" max="10" name="fmeaDetection" value="${attr(existing?.fmeaDetection||5)}"></div></div></details></form>`;
+      openModal(`${existing?"Editar": "Novo"} ${f.type.toLowerCase()}`,body,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveFailureBtn">SALVAR E CALCULAR FMEA</button>`,{wide:true});
+      byId("failureForm").addEventListener("input",()=>scheduleSave());
+      byId("saveFailureBtn").onclick=()=>{const form=byId("failureForm");if(!validateForm(form))return;const data=getFormData(form);["km","cost","downtime","fmeaSeverity","fmeaOccurrence","fmeaDetection"].forEach(k=>data[k]=nonNegative(data[k]));const index=state.failures.findIndex(x=>x.id===data.id);if(index>=0)state.failures[index]={...existing,...data};else state.failures.unshift(data);let fm=state.fmea.find(x=>x.failureId===data.id);if(!fm){fm={id:uid(),failureId:data.id,title:data.title};state.fmea.unshift(fm);}Object.assign(fm,{title:data.title,severity:data.fmeaSeverity,occurrence:data.fmeaOccurrence,detection:data.fmeaDetection,action:data.correctiveAction});let rec=state.records.find(x=>x.failureId===data.id);if(!rec){rec={id:uid(),failureId:data.id};state.records.unshift(rec);}Object.assign(rec,{type:data.type,date:data.date,km:data.km,title:data.title,description:data.description,cost:data.cost});if(state.vehicle&&data.km>nonNegative(state.vehicle.currentKm))state.vehicle.currentKm=data.km;scheduleSave(true);closeModal();navigate("records");toast(`FMEA: NPR ${calculateFmea(fm).npr} — ${calculateFmea(fm).band}.`,calculateFmea(fm).band==="ALTO"?"error":"success");};
+    }
+
+    function openRecordDetail(id) {
+      const record=state.records.find(x=>x.id===id);if(!record)return;if(record.failureId){openFailureForm(record.failureId);return;}if(record.fuelLogId){const log=state.fuelLogs.find(x=>x.id===record.fuelLogId);const metric=calculateFuelMetrics().find(x=>x.id===log?.id);openModal(record.title,`<div class="card"><p><strong>${number(log?.liters,2)} l</strong> × ${money(log?.pricePerLiter)} = ${money(log?.total)}</p><p>Posto: ${escapeHtml(log?.station||"Não informado")}<br>Qualidade: ${escapeHtml(log?.quality||"Não informado")}</p><p>Consumo: ${metric?.consumption?`${number(metric.consumption,2)} km/l`:"Aguardando ciclo cheio a cheio"}<br>Custo/km: ${metric?.costKm?money(metric.costKm):"A calcular"}<br>Autonomia real: ${metric?.realRange?`${number(metric.realRange,0)} km`:"A calcular"}</p></div>`,`<button class="btn" data-action="close-modal">FECHAR</button>`);return;}openGenericRecordForm(record.type,record);
+    }
+
+    function deleteRecord(id){const r=state.records.find(x=>x.id===id);if(!r||!confirmAction(`Excluir o registro “${r.title||r.type}”?`))return;if(r.failureId){state.failures=state.failures.filter(x=>x.id!==r.failureId);state.fmea=state.fmea.filter(x=>x.failureId!==r.failureId);}if(r.fuelLogId)state.fuelLogs=state.fuelLogs.filter(x=>x.id!==r.fuelLogId);state.records=state.records.filter(x=>x.id!==id);scheduleSave();render();}
+
+    function openSpecialLog(kind) {
+      const configs={
+        oil:{title:"Troca de óleo do motor",store:"oilLogs",fields:`<div class="field"><label>Marca</label><input name="brand"></div><div class="field"><label>Viscosidade</label><input name="viscosity"></div><div class="field"><label>Especificação</label><input name="specification"></div><div class="field"><label>Quantidade</label><input name="quantity"></div><div class="field"><label>Filtro</label><input name="filter"></div><div class="field"><label>Marca/código do filtro</label><input name="filterCode"></div>`},
+        fluid:{title:"Registro de fluido",store:"fluids",fields:`<div class="field"><label>Tipo</label><select name="type">${selectOptions(["ARREFECIMENTO","FLUIDO DE FREIO","DIREÇÃO HIDRÁULICA","ÓLEO DO CÂMBIO MANUAL"],"")}</select></div><div class="field"><label>Especificação</label><input name="specification"></div><div class="field"><label>Quantidade</label><input name="quantity"></div><div class="field"><label>Próximo vencimento</label><input type="date" name="dueDate"></div>`},
+        belt:{title:"Correia dentada",store:"beltLogs",fields:`<div class="field"><label>Kit / marca</label><input name="kit"></div><div class="field"><label>Códigos</label><input name="codes"></div><div class="field"><label>Tensor e rolamentos</label><input name="tensioner"></div><div class="field"><label>Bomba-d'água</label><input name="waterPump"></div><div class="field"><label>Correias auxiliares</label><input name="auxiliary"></div><div class="field"><label>Próximo vencimento</label><input type="date" name="dueDate"></div><div class="field"><label>Próxima troca (km)</label><input type="number" min="0" name="dueKm"></div>`}
+      };const cfg=configs[kind];
+      openModal(cfg.title,`<form id="specialLogForm"><div class="form-grid"><div class="field"><label>Data</label><input type="date" name="date" value="${localDateISO()}"></div><div class="field"><label>Quilometragem</label><input type="number" min="0" name="km" value="${attr(state.vehicle?.currentKm||"")}"></div>${cfg.fields}${moneyInput("cost","Custo",0)}<div class="field wide"><label>Observações</label><textarea name="notes"></textarea></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveSpecialLogBtn">SALVAR</button>`);
+      byId("saveSpecialLogBtn").onclick=()=>{const data=getFormData(byId("specialLogForm"));data.id=uid();data.km=nonNegative(data.km);data.cost=nonNegative(data.cost);state[cfg.store].unshift(data);state.records.unshift({id:uid(),type:"MANUTENÇÃO",date:data.date,km:data.km,title:cfg.title,description:data.notes||"Registro de manutenção preventiva",cost:data.cost,specialLogId:data.id});if(state.vehicle&&data.km>nonNegative(state.vehicle.currentKm))state.vehicle.currentKm=data.km;scheduleSave(true);closeModal();navigate("records");};
+    }
+
+    function openServiceForm() {
+      openModal("Serviço terceirizado",`<form id="serviceForm"><div class="form-grid"><div class="field"><label class="required">Oficina / profissional</label><input required name="provider"></div><div class="field"><label>Telefone</label><input name="phone"></div><div class="field wide"><label>Endereço</label><input name="address"></div><div class="field wide"><label class="required">Serviço</label><input required name="service"></div><div class="field"><label>Data</label><input type="date" name="date" value="${localDateISO()}"></div>${moneyInput("price","Preço",0)}<div class="field"><label>Garantia</label><input name="warranty"></div><div class="field"><label>Nota geral 0–5</label><input type="number" min="0" max="5" step=".1" name="rating"></div>${checkbox("rework","É retrabalho",false)}<div class="field"><label>Serviço original vinculado</label><select name="originalServiceId"><option value="">Nenhum</option>${state.services.map(s=>`<option value="${s.id}">${escapeHtml(s.service)}</option>`).join("")}</select></div>${moneyInput("extraCost","Custo extra",0)}<div class="field"><label>Tempo perdido</label><input name="lostTime"></div><div class="field wide"><label>Observações</label><textarea name="notes"></textarea></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveServiceBtn">SALVAR</button>`);
+      byId("saveServiceBtn").onclick=()=>{const form=byId("serviceForm");if(!validateForm(form))return;const data=getFormData(form);data.id=uid();data.price=nonNegative(data.price);data.extraCost=nonNegative(data.extraCost);data.rating=clamp(nonNegative(data.rating),0,5);state.services.unshift(data);state.records.unshift({id:uid(),type:"SERVIÇO",date:data.date,title:data.service,description:`${data.provider}${data.rework?" · retrabalho":""}`,cost:data.price+data.extraCost,serviceId:data.id});scheduleSave(true);closeModal();navigate("records");};
+    }
+
+    function openDocumentForm() {
+      openModal("Documento do veículo",`<form id="documentForm"><div class="form-grid"><div class="field"><label class="required">Tipo</label><select name="type">${selectOptions(["LICENCIAMENTO","MULTA","SEGURO","REGULARIZAÇÃO","INSPEÇÃO","GNV","TRANSFERÊNCIA"],"")}</select></div><div class="field"><label>Status</label><select name="status">${selectOptions(["PENDENTE","REGULAR","CONCLUÍDO"],"PENDENTE")}</select></div><div class="field"><label>Vencimento</label><input type="date" name="dueDate"></div>${moneyInput("cost","Custo",0)}<div class="field"><label>Protocolo</label><input name="protocol"></div><div class="field wide"><label>Observações</label><textarea name="notes"></textarea></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveDocumentBtn">SALVAR</button>`);
+      byId("saveDocumentBtn").onclick=()=>{const form=byId("documentForm");if(!validateForm(form))return;const data=getFormData(form);data.id=uid();data.cost=nonNegative(data.cost);state.documents.unshift(data);scheduleSave(true);closeModal();navigate("records");};
+    }
+
+    function openPatrimonialForm() {
+      const previous=state.patrimonialHistory.sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
+      openModal("Valor patrimonial anual",`<form id="patrimonialForm"><div class="form-grid"><div class="field"><label>Data</label><input type="date" name="date" value="${localDateISO()}"></div>${moneyInput("marketValue","Valor de mercado estimado",0)}<div class="field"><label>Quilometragem</label><input type="number" min="0" name="km" value="${attr(state.vehicle?.currentKm||"")}"></div><div class="field"><label>Estado geral 0–5</label><input type="number" min="0" max="5" step=".1" name="condition"></div><div class="field wide"><label>Melhorias / observações</label><textarea name="improvements"></textarea></div></div></form>${previous?`<div class="card"><strong>Registro anterior</strong><p>${dateLabel(previous.date)} · ${money(previous.marketValue)} · ${number(previous.km,0)} km · estado ${number(previous.condition,1)}/5</p></div>`:""}`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="savePatrimonialBtn">SALVAR</button>`);
+      byId("savePatrimonialBtn").onclick=()=>{const data=getFormData(byId("patrimonialForm"));data.id=uid();data.marketValue=nonNegative(data.marketValue);data.km=nonNegative(data.km);data.condition=clamp(nonNegative(data.condition),0,5);state.patrimonialHistory.unshift(data);scheduleSave();closeModal();navigate("records");};
+    }
+
+    function openGnvSimulator() {
+      openModal("Simulador futuro de GNV",`<form id="gnvForm"><div class="form-grid">${moneyInput("kitCost","Custo do kit",0)}${moneyInput("documentCost","Documentação",0)}${moneyInput("inspectionCost","Inspeções",0)}${moneyInput("extraMonthly","Manutenção/custos extras mensais",0)}<div class="field"><label>Km/mês</label><input type="number" min="0" name="monthlyKm" value="${state.settings.monthlyKmMin}"></div><div class="field"><label>Consumo gasolina (km/l)</label><input type="number" min="0" step=".01" name="gasConsumption"></div><div class="field"><label>Preço gasolina (R$/l)</label><input type="number" min="0" step=".001" name="gasPrice"></div><div class="field"><label>Consumo GNV (km/unidade)</label><input type="number" min="0" step=".01" name="gnvConsumption"></div><div class="field"><label>Preço GNV (R$/unidade)</label><input type="number" min="0" step=".001" name="gnvPrice"></div></div><button type="button" class="btn primary block" id="calculateGnvBtn">CALCULAR</button></form><div id="gnvResult" class="section"></div>`,`<button class="btn" data-action="close-modal">FECHAR</button>`);
+      byId("calculateGnvBtn").onclick=()=>{const result=calculateGnv(getFormData(byId("gnvForm")));byId("gnvResult").innerHTML=`<div class="grid two"><div class="card metric"><span class="label">Gasolina / km</span><span class="value">${result.gasCostKm===null?"Não calculável":money(result.gasCostKm)}</span></div><div class="card metric"><span class="label">GNV / km</span><span class="value">${result.gnvCostKm===null?"Não calculável":money(result.gnvCostKm)}</span></div><div class="card metric"><span class="label">Economia mensal</span><span class="value">${result.monthlySavings===null?"Não calculável":money(result.monthlySavings)}</span></div><div class="card metric"><span class="label">Payback</span><span class="value">${result.payback===null?"Não calculável":`${number(result.payback,1)} meses`}</span></div></div>`;};
+    }
+
+    // ===========================
+    // PARTS
+    // ===========================
+    function renderParts() {
+      const sorted=[...state.parts].sort((a,b)=>(partPriority(b))-(partPriority(a)));
+      return `<div class="page-title"><div><div class="eyebrow">Horizonte de 20 anos</div><h1>Estoque estratégico</h1><p class="muted">Disponibilidade, criticidade, preço e risco de escassez.</p></div><button class="btn primary small" data-action="new-part">NOVA</button></div><section class="grid three"><div class="card metric"><span class="label">Peças cadastradas</span><span class="value">${state.parts.length}</span></div><div class="card metric"><span class="label">Itens armazenados</span><span class="value">${state.parts.filter(x=>x.status==="ARMAZENADA").length}</span></div><div class="card metric"><span class="label">Críticas sem reserva</span><span class="value">${state.parts.filter(x=>x.critical&&nonNegative(x.quantity)<nonNegative(x.minimum)).length}</span></div></section><section class="section"><div class="list">${sorted.length?sorted.map(renderPartCard).join(""):emptyState("Nenhuma peça cadastrada.","Cadastre necessidades imediatas e itens de estoque estratégico.",`<button class="btn primary" data-action="new-part">CADASTRAR PEÇA</button>`)}</div></section><section class="section"><details><summary>Modificações e peças originais removidas</summary><div class="details-body"><button class="btn block" id="newModificationBtn">NOVA MODIFICAÇÃO</button>${state.modifications.length?state.modifications.map(m=>`<div class="list-item section"><strong>${escapeHtml(m.title)}</strong><br><small>${escapeHtml(m.installedPart||"Peça não informada")} · reversível: ${m.reversible?"sim":"não"}</small></div>`).join(""):"<p class='muted section'>Nenhuma modificação registrada.</p>"}</div></details></section>`;
+    }
+
+    function partPriority(part){const availability={"FÁCIL":0,"LIMITADA":2,"RARA":4,"INDISPONÍVEL":6}[part.availability]||0;return availability+(part.critical?5:0)+(nonNegative(part.quantity)<nonNegative(part.minimum)?3:0)+clamp(nonNegative(part.scarcityRisk),0,5)-clamp(nonNegative(part.deterioration),0,5);}
+    function renderPartCard(p){const quotes=state.partQuotes.filter(q=>q.partId===p.id).sort((a,b)=>String(a.date).localeCompare(String(b.date)));const last=quotes.at(-1),prev=quotes.at(-2);const variation=last&&prev&&nonNegative(prev.price)?(nonNegative(last.price)-nonNegative(prev.price))/nonNegative(prev.price)*100:null;return `<article class="card ${p.critical?"attention":""}"><div class="list-item-head"><div><h3>${escapeHtml(p.name)}</h3><small>${escapeHtml(p.manufacturer||"Fabricante não informado")} · ${escapeHtml(p.code||"sem código")}</small></div>${badge(p.status||"PLANEJADA",statusColor(p.status))}</div><div class="chips"><span class="chip">Qtd. ${number(p.quantity,0)}/${number(p.minimum,0)}</span><span class="chip">${p.availability}</span><span class="chip">${p.category}</span><span class="chip">Prioridade ${partPriority(p)}</span></div>${last?`<p><small>Preço atual ${money(last.price)}${variation===null?"":` · variação ${variation>=0?"+":""}${number(variation,1)}%`}</small></p>`:""}<div class="list-actions"><button class="btn small" data-action="part-detail" data-id="${p.id}">ABRIR</button><button class="btn small" data-action="edit-part" data-id="${p.id}">EDITAR</button><button class="btn small danger" data-action="delete-part" data-id="${p.id}">EXCLUIR</button></div></article>`;}
+
+    function openPartForm(id=null) {
+      const existing=id?findPart(id):null;const p={id:uid(),name:"",manufacturer:"",code:"",application:"",versions:"",quantity:0,minimum:0,price:0,supplier:"",location:"",status:"PLANEJADA",category:"ESTOQUE ESTRATÉGICO",availability:"FÁCIL",scarcityRisk:0,deterioration:0,critical:false,validity:"",equivalents:[],lifeEstimate:"",installedDate:"",installedKm:"",warranty:"",...(existing||{})};
+      openModal(existing?"Editar peça":"Nova peça",`<form id="partForm"><input type="hidden" name="id" value="${p.id}"><div class="form-grid"><div class="field"><label class="required">Nome</label><input required name="name" value="${attr(p.name)}"></div><div class="field"><label>Fabricante</label><input name="manufacturer" value="${attr(p.manufacturer)}"></div><div class="field"><label>Código</label><input name="code" value="${attr(p.code)}"></div><div class="field"><label>Aplicação</label><input name="application" value="${attr(p.application)}"></div><div class="field wide"><label>Versões compatíveis</label><input name="versions" value="${attr(p.versions)}"></div><div class="field"><label>Quantidade</label><input type="number" min="0" name="quantity" value="${p.quantity}"></div><div class="field"><label>Estoque mínimo</label><input type="number" min="0" name="minimum" value="${p.minimum}"></div>${moneyInput("price","Preço da compra",p.price)}<div class="field"><label>Fornecedor desta compra/cotação</label><input name="supplier" value="${attr(p.supplier)}"></div><div class="field"><label>Local armazenado</label><input name="location" value="${attr(p.location)}"></div><div class="field"><label>Status</label><select name="status">${selectOptions(["PLANEJADA","COMPRAR","COMPRADA","RECEBIDA","ARMAZENADA","INSTALADA"],p.status)}</select></div><div class="field"><label>Classificação</label><select name="category">${selectOptions(["USO IMEDIATO","ESTOQUE ESTRATÉGICO"],p.category)}</select></div><div class="field"><label>Disponibilidade</label><select name="availability">${selectOptions(["FÁCIL","LIMITADA","RARA","INDISPONÍVEL"],p.availability)}</select></div><div class="field"><label>Risco de escassez 0–5</label><input type="number" min="0" max="5" name="scarcityRisk" value="${p.scarcityRisk}"></div><div class="field"><label>Risco de deterioração 0–5</label><input type="number" min="0" max="5" name="deterioration" value="${p.deterioration}"></div>${checkbox("critical","Crítica: pode deixar o carro parado",p.critical)}<div class="field"><label>Validade</label><input type="date" name="validity" value="${attr(p.validity)}"></div><div class="field"><label>Vida útil estimada (informada)</label><input name="lifeEstimate" value="${attr(p.lifeEstimate)}"></div><div class="field"><label>Data de instalação</label><input type="date" name="installedDate" value="${attr(p.installedDate)}"></div><div class="field"><label>Km na instalação</label><input type="number" min="0" name="installedKm" value="${attr(p.installedKm)}"></div><div class="field"><label>Garantia</label><input name="warranty" value="${attr(p.warranty)}"></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="savePartBtn">SALVAR</button>`,{wide:true});
+      byId("savePartBtn").onclick=()=>{const form=byId("partForm");if(!validateForm(form))return;const data=getFormData(form);["quantity","minimum","price","scarcityRisk","deterioration","installedKm"].forEach(k=>data[k]=nonNegative(data[k]));const duplicate=state.parts.find(x=>x.id!==data.id&&((data.code&&x.code&&x.code.toLowerCase()===data.code.toLowerCase())||(x.name.toLowerCase()===data.name.toLowerCase()&&String(x.manufacturer).toLowerCase()===String(data.manufacturer).toLowerCase())));if(duplicate&&!confirmAction(`Possível duplicidade com “${duplicate.name}” (${duplicate.code||"sem código"}). Salvar mesmo assim?`))return;data.equivalents=existing?.equivalents||[];const index=state.parts.findIndex(x=>x.id===data.id);if(index>=0)state.parts[index]={...existing,...data};else state.parts.unshift(data);if(data.price>0)state.partQuotes.push({id:uid(),partId:data.id,date:localDateISO(),price:data.price,supplier:data.supplier,link:"",availability:data.availability});scheduleSave(true);closeModal();navigate("parts");toast("Peça salva.","success");};
+    }
+
+    function openPartDetail(id) {
+      const p=findPart(id);if(!p)return;const quotes=state.partQuotes.filter(q=>q.partId===id).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+      const body=`<div class="card"><h3>${escapeHtml(p.name)}</h3><p>${escapeHtml(p.manufacturer||"Fabricante não informado")} · ${escapeHtml(p.code||"sem código")}<br>${escapeHtml(p.application||"Aplicação não informada")}<br>Compatíveis: ${escapeHtml(p.versions||"Não informado")}</p><div class="chips"><span class="chip">${p.availability}</span><span class="chip">Qtd. ${p.quantity}</span><span class="chip">Local ${escapeHtml(p.location||"não informado")}</span></div></div><details open><summary>Histórico de preços</summary><div class="details-body">${quotes.length?quotes.map(q=>`<div class="list-item"><div class="list-item-head"><div><strong>${money(q.price)}</strong><br><small>${dateLabel(q.date)} · ${escapeHtml(q.supplier||"fornecedor não informado")}</small></div><span>${escapeHtml(q.availability||"")}</span></div>${q.link?`<a href="${attr(q.link)}" target="_blank" rel="noopener">Abrir cotação</a>`:""}</div>`).join(""):"<p class='muted'>Sem cotações.</p>"}<button class="btn block section" id="newQuoteBtn">NOVA COTAÇÃO</button></div></details><details open><summary>Peças equivalentes</summary><div class="details-body">${p.equivalents?.length?p.equivalents.map(e=>`<div class="list-item"><strong>${escapeHtml(e.name)}</strong><br><small>${e.type} · ${e.directFit?"encaixe direto":"exige adaptação"} · impacto ${escapeHtml(e.reliabilityImpact||"não informado")}</small><p>${escapeHtml(e.adaptation||"")}</p></div>`).join(""):"<p class='muted'>Nenhuma equivalente relacionada.</p>"}<button class="btn block section" id="newEquivalentBtn">RELACIONAR EQUIVALENTE</button></div></details>`;
+      openModal(`Peça — ${p.name}`,body,`<button class="btn" data-action="close-modal">FECHAR</button>`,{wide:true});byId("newQuoteBtn").onclick=()=>openQuoteForm(id);byId("newEquivalentBtn").onclick=()=>openEquivalentForm(id);
+    }
+
+    function openQuoteForm(partId) { const p=findPart(partId);openModal("Nova cotação",`<form id="quoteForm"><div class="form-grid"><div class="field"><label>Data</label><input type="date" name="date" value="${localDateISO()}"></div>${moneyInput("price","Preço",0)}<div class="field"><label>Fornecedor</label><input name="supplier"></div><div class="field"><label>Link</label><input type="url" name="link"></div><div class="field"><label>Disponibilidade</label><select name="availability">${selectOptions(["FÁCIL","LIMITADA","RARA","INDISPONÍVEL"],p.availability)}</select></div></div></form>`,`<button class="btn" id="backPartBtn">CANCELAR</button><button class="btn primary" id="saveQuoteBtn">SALVAR</button>`);byId("backPartBtn").onclick=()=>openPartDetail(partId);byId("saveQuoteBtn").onclick=()=>{const data=getFormData(byId("quoteForm"));data.id=uid();data.partId=partId;data.price=nonNegative(data.price);state.partQuotes.push(data);scheduleSave();openPartDetail(partId);};}
+
+    function openEquivalentForm(partId) { const p=findPart(partId);openModal("Peça equivalente",`<form id="equivalentForm"><div class="field"><label class="required">Nome / código da alternativa</label><input required name="name"></div><div class="field"><label>Relação</label><select name="type">${selectOptions(["ORIGINAL","ALTERNATIVA","SUBSTITUTA"],"ALTERNATIVA")}</select></div>${checkbox("preferred","Preferencial",false)}${checkbox("directFit","Encaixe direto",true)}<div class="field"><label>Adaptação necessária</label><textarea name="adaptation"></textarea></div><div class="field"><label>Impacto em confiabilidade</label><input name="reliabilityImpact"></div>${checkbox("reversible","Reversível",true)}</form>`,`<button class="btn" id="backPartBtn">CANCELAR</button><button class="btn primary" id="saveEquivalentBtn">SALVAR</button>`);byId("backPartBtn").onclick=()=>openPartDetail(partId);byId("saveEquivalentBtn").onclick=()=>{const form=byId("equivalentForm");if(!validateForm(form))return;p.equivalents=p.equivalents||[];p.equivalents.push({id:uid(),...getFormData(form)});scheduleSave(true);openPartDetail(partId);};}
+
+    function deletePart(id){const p=findPart(id);if(!p||!confirmAction(`Excluir “${p.name}” e suas cotações?`))return;state.parts=state.parts.filter(x=>x.id!==id);state.partQuotes=state.partQuotes.filter(x=>x.partId!==id);scheduleSave();render();}
+
+    document.addEventListener("click",event=>{if(event.target.id==="newModificationBtn")openModificationForm();});
+    function openModificationForm(){openModal("Nova modificação",`<form id="modificationForm"><div class="form-grid"><div class="field wide"><label class="required">Título</label><input required name="title"></div><div class="field wide"><label>Motivo</label><textarea name="reason"></textarea></div>${moneyInput("cost","Custo",0)}<div class="field"><label>Original removido</label><input name="originalRemoved"></div><div class="field"><label>Peça instalada</label><input name="installedPart"></div>${checkbox("reversible","Reversível",true)}<div class="field wide"><label>Instruções para retorno ao original</label><textarea name="returnInstructions"></textarea></div>${moneyInput("returnCost","Custo estimado para retorno",0)}<div class="field"><label>Destino da peça original</label><select name="originalStatus">${selectOptions(["REUTILIZÁVEL","REPARÁVEL","DESCARTE"],"REUTILIZÁVEL")}</select></div><div class="field"><label>Local da peça original</label><input name="originalLocation"></div></div></form>`,`<button class="btn" data-action="close-modal">CANCELAR</button><button class="btn primary" id="saveModificationBtn">SALVAR</button>`);byId("saveModificationBtn").onclick=()=>{const form=byId("modificationForm");if(!validateForm(form))return;const data=getFormData(form);data.id=uid();data.date=localDateISO();data.km=state.vehicle?.currentKm||0;data.cost=nonNegative(data.cost);data.returnCost=nonNegative(data.returnCost);state.modifications.unshift(data);if(data.originalRemoved&&data.originalStatus!=="DESCARTE")state.parts.unshift({id:uid(),name:data.originalRemoved,manufacturer:"",code:"",application:"Peça original removida",versions:"",quantity:1,minimum:0,price:0,supplier:"",location:data.originalLocation,status:"ARMAZENADA",category:"ESTOQUE ESTRATÉGICO",availability:"LIMITADA",scarcityRisk:0,deterioration:0,critical:false,equivalents:[],removedByModificationId:data.id,originalStatus:data.originalStatus});logDecision("Modificação registrada",data.title,"Manter original",data.reason,`Custo ${money(data.cost)}; reversível ${data.reversible?"sim":"não"}`);scheduleSave(true);closeModal();navigate("parts");};}
+
+    function openCosts() {
+      const c=calculateProjectCosts();const repairsSpent=state.repairs.reduce((s,r)=>s+nonNegative(r.actualCost),0);const fuel=state.fuelLogs.reduce((s,x)=>s+nonNegative(x.total),0);const tools=state.tools.reduce((s,x)=>s+nonNegative(x.price),0);const services=state.services.reduce((s,x)=>s+nonNegative(x.price)+nonNegative(x.extraCost),0);
+      openModal("Custos do projeto",`<div class="grid two"><div class="card metric"><span class="label">Custo operacional/km</span><span class="value">${c.operationalPerKm===null?"A calcular":money(c.operationalPerKm)}</span></div><div class="card metric"><span class="label">Custo total do projeto/km</span><span class="value">${c.totalPerKm===null?"A calcular":money(c.totalPerKm)}</span></div></div><div class="card section">${comparisonRow("Km contabilizados",`${number(c.km,0)} km`)}${comparisonRow("Aquisição",money(c.acquisition))}${comparisonRow("Combustível",money(fuel))}${comparisonRow("Reparos",money(repairsSpent))}${comparisonRow("Serviços terceirizados",money(services))}${comparisonRow("Ferramentas",money(tools))}${comparisonRow("Garagem na fase registrada",money(nonNegative(state.settings.garageMonthly)*monthsSince(state.vehicle?.purchaseDate)))}</div><p class="muted">Custo operacional exclui aquisição e ferramentas. Custo total inclui aquisição e pode incluir ferramentas reutilizáveis conforme configuração.</p>`,`<button class="btn" data-action="close-modal">FECHAR</button>`);
+    }
+
+    // ===========================
+    // BACKUP / SETTINGS
+    // ===========================
+    function openSettings(initial=false) {
+      const storage=storageEstimate();
+      const body=`<details open><summary>Configurações principais</summary><div class="details-body"><form id="settingsForm"><div class="form-grid">${moneyInput("ownHourValue","Valor da própria hora",state.settings.ownHourValue)}${moneyInput("garageMonthly","Garagem mensal",state.settings.garageMonthly)}${moneyInput("maxInstallment","Parcela máxima",state.settings.maxInstallment)}${moneyInput("maxMonthlySpend","Máximo disponível por mês",state.settings.maxMonthlySpend)}<div class="field"><label>Uso mensal mínimo (km)</label><input type="number" min="0" name="monthlyKmMin" value="${state.settings.monthlyKmMin}"></div><div class="field"><label>Uso mensal máximo (km)</label><input type="number" min="0" name="monthlyKmMax" value="${state.settings.monthlyKmMax}"></div><div class="field"><label>Raio de busca (km)</label><input type="number" min="0" name="searchRadiusKm" value="${state.settings.searchRadiusKm}"></div><div class="field"><label>Horizonte do projeto (anos)</label><input type="number" min="1" name="projectYears" value="${state.settings.projectYears}"></div><div class="field"><label>Óleo — intervalo km</label><input type="number" min="0" name="oilKm" value="${state.settings.oilKm}"></div><div class="field"><label>Óleo — intervalo meses</label><input type="number" min="0" name="oilMonths" value="${state.settings.oilMonths}"></div><div class="field"><label>Alerta autonomia (%)</label><input type="number" min="0" name="autonomyAlertPercent" value="${state.settings.autonomyAlertPercent}"></div><div class="field"><label>FMEA: limite baixo</label><input type="number" min="1" name="fmeaLowMax" value="${state.settings.fmeaLowMax}"></div><div class="field"><label>FMEA: limite médio</label><input type="number" min="1" name="fmeaMediumMax" value="${state.settings.fmeaMediumMax}"></div>${checkbox("includeReusableTools","Incluir ferramentas reutilizáveis no custo total/km",state.settings.includeReusableTools)}</div><button type="button" class="btn primary block" id="saveSettingsBtn">SALVAR CONFIGURAÇÕES</button></form></div></details>
+      <details open><summary>Armazenamento e backup</summary><div class="details-body"><div class="grid two"><div class="card metric"><span class="label">Uso local estimado</span><span class="value">${storage.label}</span><span class="sub">Estimativa do JSON; o navegador pode contabilizar diferente</span></div><div class="card"><p>Anúncios: <strong>${state.candidates.length}</strong><br>Imagens: <strong>${storage.images}</strong><br>Registros: <strong>${state.records.length}</strong><br>Peças: <strong>${state.parts.length}</strong></p></div></div>${storage.bytes>30*1048576?`<p class="danger-text"><strong>Uso elevado.</strong> Considere excluir imagens/anúncios antigos após exportar backup.</p>`:""}<p>Último backup: <strong>${state.meta.lastBackup?dateLabel(state.meta.lastBackup):"Nunca"}</strong></p><div class="button-row"><button class="btn success" id="exportBackupBtn">EXPORTAR BACKUP</button><label class="btn" style="display:flex;align-items:center;justify-content:center">IMPORTAR BACKUP<input class="hidden" type="file" accept="application/json,.json" id="importBackupInput"></label></div></div></details>
+      <details><summary>Relatórios e histórico</summary><div class="details-body"><button class="btn block" data-action="open-reports">RELATÓRIOS IMPRIMÍVEIS</button><h3 class="section">Log de decisões</h3>${state.decisions.length?`<div class="list">${state.decisions.slice(0,30).map(d=>`<div class="list-item"><strong>${escapeHtml(d.decision)}</strong><br><small>${dateLabel(d.date)} · ${escapeHtml(d.context)}</small><p>${escapeHtml(d.justification||"Sem justificativa adicional")}</p><small>${escapeHtml(d.values||"")}</small></div>`).join("")}</div>`:"<p class='muted'>Nenhuma decisão importante registrada.</p>"}</div></details>
+      <details><summary>Limitações da versão local</summary><div class="details-body"><ul><li>Não consulta FIPE, anúncios, preços, seguradoras ou documentos na internet.</li><li>Links são armazenados, mas não são lidos pelo navegador por restrições de segurança e ausência de backend.</li><li>Alertas existem somente dentro da aplicação; não há integração com calendário/notificações externas.</li><li>Impressão/PDF usa o recurso nativo do navegador.</li><li>Os dados pertencem ao perfil deste navegador/dispositivo. Faça backup periódico.</li></ul></div></details>
+      <details><summary>Dados e reinicialização</summary><div class="details-body"><button class="btn danger block" id="resetAppBtn">APAGAR TODOS OS DADOS LOCAIS</button></div></details>`;
+      openModal(initial?"Configurações iniciais":"Configurações e dados",body,`<button class="btn" data-action="close-modal">FECHAR</button>`,{wide:true});
+      byId("saveSettingsBtn").onclick=()=>{const data=getFormData(byId("settingsForm"));["ownHourValue","garageMonthly","maxInstallment","maxMonthlySpend","monthlyKmMin","monthlyKmMax","searchRadiusKm","projectYears","oilKm","oilMonths","autonomyAlertPercent","fmeaLowMax","fmeaMediumMax"].forEach(k=>data[k]=nonNegative(data[k]));state.settings={...state.settings,...data};scheduleSave();toast("Configurações salvas.","success");if(initial){state.meta.firstUseComplete=true;scheduleSave();closeModal();byId("intro").classList.add("hidden");render();}else openSettings(false);};
+      byId("exportBackupBtn").onclick=exportBackup;
+      byId("importBackupInput").onchange=event=>importBackup(event.target.files[0]);
+      byId("resetAppBtn").onclick=async()=>{if(!confirmAction("APAGAR todos os dados locais? Exporte um backup antes. Esta ação não pode ser desfeita."))return;if(!confirmAction("Confirma a reinicialização completa?"))return;state=createDefaultState();await persistState(false);closeModal();byId("intro").classList.remove("hidden");navigate("home");};
+    }
+
+    async function exportBackup() {
+      const payload={application:"PROJETO VECTRA B",version:APP_VERSION,exportedAt:new Date().toISOString(),data:state};const text=JSON.stringify(payload,null,2);downloadBlob(new Blob([text],{type:"application/json"}),`projeto-vectra-b-backup-${localDateISO()}.json`);state.meta.lastBackup=new Date().toISOString();state.meta.importantChange=false;state.backupsMetadata.unshift({id:uid(),date:state.meta.lastBackup,size:new Blob([text]).size,version:APP_VERSION});await persistState();toast("Backup exportado em um único arquivo JSON.","success");openSettings();
+    }
+
+    function importBackup(file) {
+      if(!file)return;if(!confirmAction("A restauração substituirá TODOS os dados atuais. Continuar?"))return;const reader=new FileReader();reader.onerror=()=>toast("Não foi possível ler o arquivo.","error");reader.onload=async()=>{try{const parsed=JSON.parse(reader.result);if(parsed.application!=="PROJETO VECTRA B"||!parsed.data||typeof parsed.data!=="object")throw new Error("Formato incompatível");if(!Array.isArray(parsed.data.candidates)||!parsed.data.settings)throw new Error("Estrutura incompleta");state=parsed.data;migrateState();state.meta.updatedAt=new Date().toISOString();await persistState(false);closeModal();render();toast("Backup restaurado com sucesso.","success");}catch(error){console.error(error);toast(`Backup inválido: ${error.message}`,"error");}};reader.readAsText(file);
+    }
+
+    // ===========================
+    // REPORT
+    // ===========================
+    function openReports() {
+      openModal("Relatórios imprimíveis",`<p>O relatório abre em uma janela limpa. Use “Imprimir / Salvar PDF” no navegador.</p><div class="grid two"><button class="btn" data-report="acquisition-summary">AQUISIÇÃO — RESUMO</button><button class="btn" data-report="acquisition-full">AQUISIÇÃO — COMPLETO</button><button class="btn" data-report="reform">REFORMA</button><button class="btn" data-report="costs">CUSTOS</button><button class="btn" data-report="reliability">CONFIABILIDADE</button><button class="btn" data-report="fmea">FMEA</button><button class="btn" data-report="inventory">ESTOQUE</button></div>`,`<button class="btn" data-action="close-modal">FECHAR</button>`);
+      document.querySelectorAll("[data-report]").forEach(btn=>btn.onclick=()=>printReport(btn.dataset.report));
+    }
+
+    function reportTable(headers,rows){return `<table><thead><tr>${headers.map(h=>`<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;}
+    function reportSection(title,content){return `<section><h2>${escapeHtml(title)}</h2>${content}</section>`;}
+    function printReport(type) {
+      let title="Relatório";let content="";
+      if(type.startsWith("acquisition")){title=type.endsWith("summary")?"Relatório de Aquisição — Resumo":"Relatório de Aquisição — Completo";const candidates=state.vehicle?[state.vehicle]:state.candidates;content=reportSection("Candidatos",reportTable(["Veículo","Preço","Custo total","Nota","Documento","Decisão"],candidates.map(c=>[escapeHtml(candidateName(c)),money(c.askingPrice),money(calculateAcquisitionCost(c).total),calculateInspection(c.candidateId||c.id).verified?number(calculateInspection(c.candidateId||c.id).score,2):"Não avaliada",documentStatus(c),recommendation(c)])));if(state.vehicle){const v=state.vehicle;content+=reportSection("Compra",`<p><strong>Valor final:</strong> ${money(v.finalPrice)}<br><strong>Forma:</strong> ${escapeHtml(v.paymentMethod||"Não informada")}<br><strong>Transporte:</strong> ${money(v.transportCost)}<br><strong>Documentação:</strong> ${money(nonNegative(v.documentCost)+nonNegative(v.transferCost)+nonNegative(v.debts))}<br><strong>Seguro inicial:</strong> ${money(v.initialInsurance)}<br><strong>Custo total:</strong> ${money(v.acquisitionTotal)}<br><strong>Reserva atual:</strong> ${money(state.finance.currentReserve)}<br><strong>Motivos:</strong> ${escapeHtml(v.reason||"Não informado")}</p>`);}if(type.endsWith("full")){content+=reportSection("Reparos considerados",reportTable(["Título","Prioridade","Prazo","Previsto"],state.repairs.map(r=>[escapeHtml(r.title),r.priority,r.timing,money(calculateRepairExpected(r))])));content+=reportSection("Decisões",state.decisions.map(d=>`<p><strong>${escapeHtml(d.decision)}</strong> — ${dateLabel(d.date)}<br>${escapeHtml(d.justification||"")} ${escapeHtml(d.values||"")}</p>`).join("")||"<p>Nenhuma.</p>");}}
+      if(type==="reform"){title="Relatório de Reforma";content=reportSection("Reparos",reportTable(["Reparo","Prioridade","Status","Previsto","Real","Horas"],state.repairs.filter(r=>!r.candidateId).map(r=>[escapeHtml(r.title),r.priority,r.status,money(calculateRepairExpected(r)),money(r.actualCost),number(r.actualHours||r.ownHours,1)])));}
+      if(type==="costs"){title="Relatório de Custos";const c=calculateProjectCosts();content=reportSection("Indicadores",`<p><strong>Km contabilizados:</strong> ${number(c.km,0)}<br><strong>Custo operacional:</strong> ${money(c.operational)}<br><strong>Custo operacional/km:</strong> ${c.operationalPerKm===null?"Não calculável":money(c.operationalPerKm)}<br><strong>Aquisição:</strong> ${money(c.acquisition)}<br><strong>Ferramentas:</strong> ${money(c.tools)}<br><strong>Custo total/km:</strong> ${c.totalPerKm===null?"Não calculável":money(c.totalPerKm)}</p>`)+reportSection("Despesas e serviços",reportTable(["Data","Tipo","Descrição","Custo"],state.records.filter(r=>nonNegative(r.cost)||nonNegative(r.total)).map(r=>[dateLabel(r.date),r.type,escapeHtml(r.title||""),money(nonNegative(r.cost)||nonNegative(r.total))])));}
+      if(type==="reliability"){title="Relatório de Confiabilidade";content=reportSection("Falhas, quase-falhas e sintomas",reportTable(["Data","Tipo","Ocorrência","Status","Causa raiz","Solução"],state.failures.map(f=>[dateLabel(f.date),f.type,escapeHtml(f.title),f.status,escapeHtml(f.rootCause||"Em análise"),escapeHtml(f.solution||"Não informada")])));}
+      if(type==="fmea"){title="Relatório FMEA";content=reportSection("FMEA",reportTable(["Modo de falha","G","O","D","NPR","Prioridade","Ação"],state.fmea.map(f=>{const x=calculateFmea(f);return[escapeHtml(f.title),x.severity,x.occurrence,x.detection,x.npr,x.band,escapeHtml(f.action||"Não informada")];})));}
+      if(type==="inventory"){title="Relatório de Estoque";content=reportSection("Peças",reportTable(["Peça","Código","Qtd.","Mín.","Status","Disponibilidade","Local","Prioridade"],state.parts.map(p=>[escapeHtml(p.name),escapeHtml(p.code||"—"),p.quantity,p.minimum,p.status,p.availability,escapeHtml(p.location||"—"),partPriority(p)])));}
+      const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>body{font:12px/1.45 Arial,sans-serif;color:#111;margin:24px}h1{border-bottom:3px solid #1678b8;padding-bottom:8px}h2{margin-top:24px;border-bottom:1px solid #aaa}table{width:100%;border-collapse:collapse}th,td{padding:6px;border:1px solid #bbb;text-align:left;vertical-align:top}th{background:#e7f0f5}.meta{color:#555}.actions{position:sticky;top:0;background:white;padding:8px 0}@media print{.actions{display:none}body{margin:0}@page{size:A4;margin:12mm}}</style></head><body><div class="actions"><button onclick="window.print()">IMPRIMIR / SALVAR PDF</button></div><h1>${escapeHtml(title)}</h1><p class="meta">PROJETO VECTRA B — Engenharia de Confiabilidade<br>Gerado em ${new Date().toLocaleString("pt-BR")}</p>${content||"<p>Não há dados para este relatório.</p>"}</body></html>`;
+      const win=window.open("","_blank");if(!win){toast("Permita pop-ups para abrir o relatório.","error");return;}win.document.open();win.document.write(html);win.document.close();
+    }
+
+    // ===========================
+    // INITIALIZATION
+    // ===========================
+    async function init() {
+      await loadState();
+      byId("alertsBtn").addEventListener("click",openAlerts);
+      byId("settingsBtn").addEventListener("click",()=>openSettings(false));
+      byId("startBtn").addEventListener("click",()=>{state.meta.firstUseComplete=true;scheduleSave();byId("intro").classList.add("hidden");render();});
+      byId("initialSettingsBtn").addEventListener("click",()=>openSettings(true));
+      if(!state.meta.firstUseComplete)byId("intro").classList.remove("hidden");
+      render();
+    }
+
+    init().catch(error=>{console.error(error);byId("app").innerHTML=`<div class="empty"><strong>Falha ao iniciar</strong><span>Não foi possível abrir os dados locais. Verifique as permissões do navegador.</span></div>`;});
+  })();
+  </script>
+</body>
+</html>
